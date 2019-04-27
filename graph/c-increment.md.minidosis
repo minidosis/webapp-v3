@@ -1,0 +1,11 @@
+{
+  title: "Incremento"
+  bases: { expression }
+  related: { math-addition }
+}
+
+El incremento en C [c-lang] (y C++ [cpp-lang]) permite añadir una unidad a una variable
+de tipo entero [integer-type], float [float-type], o double [double-type].
+
+Hay dos tipos de incremento, pre-incremento y post-incremento, en función de cuando se aplica.
+

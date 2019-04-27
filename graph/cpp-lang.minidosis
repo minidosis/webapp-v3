@@ -1,0 +1,12 @@
+{
+  title: "C++"
+  bases: { prog-lang }
+  children: {
+    cpp-integer-division
+    cpp-type
+    cpp-for
+    cpp-while
+    // ...
+  }
+}
+

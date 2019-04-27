@@ -1,0 +1,31 @@
+
+- Lo más importante es el grafo. 
+  Se necesita una base de datos basada en el grafo.
+  
+- El grafo está basado en 5 tipos de links: parent-child, base-derived, related.
+  Cada nodo tiene relaciones con otros en esas direcciones.
+
+- Leer el grafo en memoria, desde una representación textual?
+  O editar el grafo desde una aplicación web?
+  Básicamente, se necesita una representación del grafo de alguna manera.
+  Yo me decanto por un editor web, desde el principio. Así podrás editar siempre el contenido desde la misma web.
+  El grafo entero debe ser exportable a fichero siempre. O base de datos??
+
+- Como sería una base de datos que guarde minidosis?
+  
+  1) list<Minidosis>, donde cada Minidosis:
+
+  - Identificador: string (pero debe poder ponerse en una URL!) -> proviene del fichero.
+  - Título: El título que verá la gente en la página de esa minidosis.
+  - Contenido asociado: texto, vídeo, pregunta de test, svg, animación, etc.
+       La representación de una minidosis es libre. (BLOB?)
+  
+  [En el disco esto es un fichero por minidosis, tal como está ahora: en la cabecera del fichero hay
+   los links y luego en el cuerpo del fichero está el contenido concreto, o nada en el caso de los
+   temas]
+
+  - Un directorio con todo de ficheros tipo *.minidosis??? Los directorios que uses para organizar
+    no importan, simplemente se leen todos y palante.
+
+  [Aquí me acuerdo del tema de una base de datos tipo grafo, porque los queries para buscar intersecciones serán chungos]
+

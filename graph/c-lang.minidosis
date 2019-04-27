@@ -1,0 +1,12 @@
+{
+  title: "C"
+  bases: { prog-lang }
+  children: {
+    c-integer-division
+    c-type
+    c-for
+    c-while
+    // ...
+  }
+}
+
