@@ -39,12 +39,25 @@ class Node {
     }
     $(`}\n`)
   }
+
+  toJson() {
+    const node = { id: this.id, title: this.title };
+    for (let type in LinkType) {
+      node[listName[type]] = [];
+    }
+    this.links.forEach((type, id) => {
+      node[listName[type]].push({ id, title: graph.get(id).title })
+    })
+    return JSON.stringify(node);
+  }
 }
 
 class Graph {
   constructor() {
     this.nodes = new Map();
   }
+
+  has(id) { return this.nodes.has(id); }
 
   get(id) {
     if (!this.nodes.has(id)) {
@@ -54,7 +67,11 @@ class Graph {
   }
 
   forEachNode(callback) {
-    this.nodes.forEach(callback);
+    this.nodes.forEach((node, id) => callback(id, node));
+  }
+
+  numNodes() {
+    return this.nodes.size;
   }
 
   addNode(id, { title, bases, children, related }) {
