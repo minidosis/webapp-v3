@@ -117,16 +117,17 @@ const parseTree = (str, pos) => {
 
 const parseHeader = (header) => parseTree(header, 0).tree
 
+const minidosisName = (filename) => filename.split('.')[0]
+
 const parseAllFiles = (dir, callback) => {
   let minidosis_files = fs.readdirSync(dir).filter(file => file.endsWith('.minidosis'))
 
   for (let file of minidosis_files) {
     const full_path = dir + '/' + file;
-    callback(full_path, parseHeader(fileHeader(full_path)))
+    callback(minidosisName(file), parseHeader(fileHeader(full_path)))
   }
 }
 
 module.exports = {
-  parseHeader,
   parseAllFiles
 }
