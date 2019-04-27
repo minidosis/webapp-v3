@@ -29,3 +29,128 @@
 
   [Aquí me acuerdo del tema de una base de datos tipo grafo, porque los queries para buscar intersecciones serán chungos]
 
+
+Simplificación de la sintaxis para minidosis??
+Que controlamos nosotros??
+
+Markright
+---------
+- Hay un caracter especial para iniciar "meta-comandos" -> '#'
+- Tiene dos formas, a principio de línia ("block") y enmedio de línea ("inline").
+- El texto normal son párrafos así que 
+- La forma general de uso es:
+
+#<comando>                                                     // 
+#<comando>(argumentos)                                         // argumentos
+#<comando><open-delim>...<close-delim>                         // texto asociado delimitado
+#<comando>(argumentos...)<open-delim>...<close-delim>          // argumentos y texto asociado delimitado
+
+Los paréntesis tienen que estar pegados al comando, si no se interpreta que el comando no tiene argumentos.
+#true (yay) #code(c++)
+El delimitador de abrir también tiene que estar pegado
+
+- El comando determina qué tipo de elemento tenemos. PERO EL PARSING NO DEPENDE DE LOS ELEMENTOS!
+  Y los objetos se construyen con el input recibido del parser, que se ejecuta de antemano!
+  El tree es como un AST del texto, y cada objeto tiene los argumentos recibidos como un array 
+  de textos, y un tree que es lo que había dentro de los delimitadores (ya parseado).
+  Ese tree se interpreta luego como haga falta (traducción a HTML, PDF, mostrar como ejercicio, 
+  pregunta de test, imágen, etc.), se pueden tener muchos renderers.
+
+- Los posibles delimitadores son: `', [ ], [[ ]], [[[ ]]], { }, {{ }}, {{{ }}}, < >, << >>, <<< >>> 
+  Los paréntesis los reservamos para poder poner argumentos.
+  Al ver el primer delimitador, el comando espera el otro. Podemos escoger según el lenguaje, etc.
+  (Se podría permitir un hash para casos chungos.)
+- Los elementos se pueden anidar. Si un elemento tipo bloque tiene texto dentro, ese texto
+  puede tener elementos inline o tipo bloque también.
+
+- El formato se puede parsear a un tree de objetos:
+  - El texto normal se va leyendo por palabras, frases y párrafos, leyendo también elementos inline.
+  - En una línea vacía se parte en párrafos, y ahí se pueden insertar elementos tipo bloque.
+  - Este tree de objetos se parece al de editor.js
+
+- El tree de objetos debería poderse volver a pasar al formato texto fácilmente.
+
+-----------------------------------------------------------------
+1. Elementos tipo bloque:
+#<palabra>(args...)<open-delim>
+...
+<close-delim>
+
+pares de delimitadores posibles: 
+
+Ejemplos:
+#code(c++)<<<
+typedef vector<int> vint;
+>>>
+
+
+1.1 Títulos:
+#1[Título]
+#2[Subtítulo]
+#3[Subsubtítulo]
+
+1.2 Código:
+#code(c++)<<
+int main() {
+
+}
+>>
+
+1.3 Quote:
+#quote{
+This will be a quote
+  -- pauek
+}
+
+1.4 Listas (block): 
+#list{
+First item #code[int a;]
+
+#quote[
+Second item, the
+second item has two lines
+]
+
+Third item, which
+has two lines also, or
+even three.
+}
+
+La lista lo que hace es parsear normal por párrafos pero convertir cada párrafo en 
+un ítem de la lista.
+
+1.5 Horizontal delimiter:
+#delim[]
+
+1.6. Tablas:
+#table(|){
+1 | 2 | 3 | 4
+5 | 6 | 7 | 8
+}
+
+-----------------------------------------------------------------
+2. Elementos inline: #<palabra>(args...){}
+2.0. Hashtag:   ##
+2.1. Código:    #code{int a;}
+2.2. Links:     #a(url){texto}
+2.3. Imagenes:  #img(url){alt}
+2.4. Mates:     #math{a + b = c}
+2.5. Emphasize: #em{amazing}
+2.6. Bold:      #b{important!}
+
+Anidamiento:
+#b{important and #em{more important}}
+#em<The braces (#code<{}>) now are immune>
+
+Lista de comandos: 1, 2, 3, 4, 5, 6, code, b, a, img, math, em, #, delim, quote, table, list
+
+
+Lo bonito es que puedes añadir elementos nuevos luego, con formato propio!
+
+#question{
+What is the capital of France?
+#answer(false){London}
+#answer(true){Paris}
+#answer(false){Calcutta}
+#answer(false){Beijing}
+}
