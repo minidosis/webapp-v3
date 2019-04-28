@@ -147,7 +147,7 @@ class Parser {
           break
 
         case '#':
-          if (this.col == 1) {
+          if (this.col === 1 && paragraph.isEmpty()) {
             // block command
             addPending()
             tree.push(this.parseCommand())
@@ -222,7 +222,6 @@ const genHtml = (markright, commandObject) => {
 
   markright.forEach(node => {
     if (node.type === 'paragraph') {
-      console.log(node.children)
       if (node.children.length === 1) {
         html += genNode(node.children[0]).trim()
       } else {
