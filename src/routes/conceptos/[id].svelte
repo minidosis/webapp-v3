@@ -33,28 +33,28 @@
   <h2>Padres</h2>
   <ul>
     {#each node.parents as parent}
-        <li><a href={'conceptos/' + parent.id}>{parent.title}</a></li>
+      <li><a href={'conceptos/' + parent.id}>{parent.title}</a></li>
     {/each}
   </ul>
 
   <h2>Bases</h2>
   <ul>
     {#each node.bases as base}
-    <li><a href={'conceptos/' + base.id}>{base.title}</a></li>
+      <li><a href={'conceptos/' + base.id}>{base.title}</a></li>
     {/each}
   </ul>
 
   <h2>Derivados</h2>
   <ul>
     {#each node.derived as deriv}
-    <li><a href={'conceptos/' + deriv.id}>{deriv.title}</a></li>
+      <li><a href={'conceptos/' + deriv.id}>{deriv.title}</a></li>
     {/each}
   </ul>
 
   <h2>Partes</h2>
   <ul>
     {#each node.children as child}
-    <li><a href={'conceptos/' + child.id}>{child.title}</a></li>
+      <li><a href={'conceptos/' + child.id}>{child.title}</a></li>
     {/each}
   </ul>
 {/if}
