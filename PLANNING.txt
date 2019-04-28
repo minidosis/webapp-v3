@@ -70,6 +70,12 @@ El delimitador de abrir también tiene que estar pegado
 
 - El tree de objetos debería poderse volver a pasar al formato texto fácilmente.
 
+AST: 
+Tree = list<BlockElem>
+BlockElem = Paragraph | BlockCommand
+Paragraph = list<InlineElem>
+InlineElem = Text | InlineCommand | ...
+
 -----------------------------------------------------------------
 1. Elementos tipo bloque:
 #<palabra>(args...)<open-delim>
