@@ -83,6 +83,19 @@ class Parser {
     return this.str.slice(start, this.pos)
   }
 
+  parseArgs() {
+    this.expect('(')
+    let start = this.pos;
+    let end = this.str.indexOf(')', start)
+    if (end === -1) {
+      fatal(`Parse error: missing closing parenthesis`)
+    }
+    let args = this.str.slice(start, end).split(',').map(x => x.trim())
+    this.pos = end;
+    this.expect(')')
+    return args;
+  }
+
   parseCommand() {
     this.expect('#')
     let cmd = new Command()
@@ -90,7 +103,6 @@ class Parser {
     cmd.args = [];
     if (this.curr() === '(') {
       cmd.args = this.parseArgs()
-      this.expect(')')
     }
     this.expect('{')
     cmd.children = this.parse()
@@ -160,17 +172,30 @@ class Parser {
   }
 }
 
-let parser = new Parser(`
+let test1 = `
+En un lenguaje de programación, una expresión es una fórmula que
+calcula un valor a partir de otros. La expresión representa un cálculo,
+y produce un solo resultado a partir de varios operandos.
+
+Las expresiones se denominan #minidosis(unary-expression){unarias} si reciben
+solamente un valor de entrada y #minidosis(binary-expression){binarias} si reciben dos.
+En #minidosis(c-lang){C} y #minidosis(cpp-lang){C++} existen un tipo especial de 
+#minidosis(c-ternary-expression){expresión ternaria}, con 3 operandos.
+`
+
+let test2 = `
 this is a paragraph #hi{yay #em{wow} !!} hola
 #question{
 a b c d
 e f g h i j
-#answer{true}
+#answer{true
+true}
 #answer{false}
 P2 sdlkjk lskdflskj 
 sdjflskdjfl sk
 }
 this is another paragraph
-`)
+`
 
+let parser = new Parser(test1)
 console.log(parser.parse())

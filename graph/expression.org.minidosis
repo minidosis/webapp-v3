@@ -12,10 +12,10 @@ En un lenguaje de programación, una expresión es una fórmula que
 calcula un valor a partir de otros. La expresión representa un cálculo,
 y produce un solo resultado a partir de varios operandos.
 
-Las expresiones se denominan (unarias)[unary-expression] si reciben
-solamente un valor de entrada y (binarias)[binary-expression] si reciben dos.
-En C [c-lang] y C++ [c++-lang] existen un tipo especial de expresión ternaria,
-con 3 operandos [c-ternary-expression].
+Las expresiones se denominan #md(unary-expression){unarias} si reciben
+solamente un valor de entrada y #md(binary-expression){binarias} si reciben dos.
+En #md(c-lang){C} y #md(cpp-lang){C++} existen un tipo especial de 
+#md(c-ternary-expression){expresión ternaria}, con 3 operandos.
 
 
 
