@@ -26,10 +26,13 @@ const findPairedBrace = (str, pos) => {
   return -1;
 }
 
-const fileHeader = (filename) => {
-  const content = fileContent(filename)
-  const end = findPairedBrace(content, 0);
-  return (end === -1 ? [] : content.slice(0, end+1));
+const splitHeader = (filename) => {
+  const str = fileContent(filename)
+  const end = findPairedBrace(str, 0);
+  return {
+    header: (end === -1 ? [] : str.slice(0, end+1)),
+    content: str.slice(end+1),
+  }
 }
 
 const isSpace = (ch) => /\s/.test(ch)
@@ -124,7 +127,8 @@ const parseAllFiles = (dir, callback) => {
 
   for (let file of minidosis_files) {
     const full_path = dir + '/' + file;
-    callback(minidosisName(file), parseHeader(fileHeader(full_path)))
+    const { header, content } = splitHeader(full_path)
+    callback(minidosisName(file), parseHeader(header), content)
   }
 }
 

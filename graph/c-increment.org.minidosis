@@ -4,8 +4,8 @@
   related: { math-addition }
 }
 
-El incremento en C [c-lang] (y C++ [cpp-lang]) permite añadir una unidad a una variable
-de tipo entero [integer-type], float [float-type], o double [double-type].
+El incremento en #md(c-lang){C} (y #md(cpp-lang){C++}) permite añadir una unidad a una variable
+de tipo #md(integer-type){entero}, #md(float-type){float}, o #md(double-type){double}.
 
 Hay dos tipos de incremento, pre-incremento y post-incremento, en función de cuando se aplica.
 

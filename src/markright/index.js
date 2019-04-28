@@ -19,9 +19,9 @@ class Paragraph {
   add(elem) { this.elems.push(elem); }
   isEmpty() { return this.elems.length === 0; }
 
-  toObj() { 
-    return { 
-      type: "paragraph", 
+  toObj() {
+    return {
+      type: "paragraph",
       children: this.elems.map(e => e.toObj()),
     }
   }
@@ -64,11 +64,11 @@ class Parser {
     this.pos++
   }
 
-  ok()   { return this.pos < this.str.length }
+  ok() { return this.pos < this.str.length }
   curr() { return this.str[this.pos] }
   at(ch) { return this.str[this.pos] === ch }
 
-  expect(ch) { 
+  expect(ch) {
     if (!this.ok() || this.curr() !== ch) {
       fatal(`Expected '${ch}'`);
     }
@@ -139,6 +139,7 @@ class Parser {
           } else {
             addPendingText()
           }
+          this.next()
           break
 
         case '}':
@@ -160,19 +161,21 @@ class Parser {
         default:
           this.all_spaces = false
           text.add(this.curr())
+          this.next()
           break
       }
       if (finish) {
         break
       }
-      this.next()
     }
     addPending()
     return tree.map(elem => elem.toObj())
   }
 }
 
-let test1 = `
+/*
+function test() {
+  let test1 = `
 En un lenguaje de programación, una expresión es una fórmula que
 calcula un valor a partir de otros. La expresión representa un cálculo,
 y produce un solo resultado a partir de varios operandos.
@@ -183,7 +186,7 @@ En #minidosis(c-lang){C} y #minidosis(cpp-lang){C++} existen un tipo especial de
 #minidosis(c-ternary-expression){expresión ternaria}, con 3 operandos.
 `
 
-let test2 = `
+  let test2 = `
 this is a paragraph #hi{yay #em{wow} !!} hola
 #question{
 a b c d
@@ -197,5 +200,45 @@ sdjflskdjfl sk
 this is another paragraph
 `
 
-let parser = new Parser(test1)
-console.log(parser.parse())
+  let parser = new Parser(test1)
+  console.log(parser.parse())
+}
+*/
+
+const parse = (str) => new Parser(str).parse()
+
+const genHtml = (markright, commandObject) => {
+  let html = '';
+
+  const genNode = (node) => {
+    let html;
+    if (node.type === 'text') {
+      html = node.text + " ";
+    } else if (node.type === 'command') {
+      html = commandObject[node.id](node.args, node.children)
+    }
+    return html;
+  }
+
+  markright.forEach(node => {
+    if (node.type === 'paragraph') {
+      console.log(node.children)
+      if (node.children.length === 1) {
+        html += genNode(node.children[0]).trim()
+      } else {
+        html += '<p>'
+        html += node.children.map(genNode).join(' ')
+        html += '</p>'
+      }
+    }
+  })
+
+  return html;
+}
+
+module.exports = {
+  parse,
+  genHtml,
+}
+
+

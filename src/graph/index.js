@@ -1,5 +1,6 @@
 
 const { parseAllFiles } = require('./parser')
+const { parse: parseMarkright } = require('../markright')
 
 const GRAPH_DIR = './graph'
 
@@ -41,7 +42,7 @@ class Node {
   }
 
   toJson() {
-    const node = { id: this.id, title: this.title };
+    const node = { id: this.id, title: this.title, content: this.content };
     for (let type in LinkType) {
       node[listName[type]] = [];
     }
@@ -74,9 +75,10 @@ class Graph {
     return this.nodes.size;
   }
 
-  addNode(id, { title, bases, children, related }) {
+  addNode(id, { title, bases, children, related }, content) {
     const node = this.get(id);
     node.title = title
+    node.content = content
 
     const add_links = (links, type, inverseType) => {
       if (links) {
@@ -96,8 +98,9 @@ class Graph {
 }
 
 const graph = new Graph();
-parseAllFiles(GRAPH_DIR, (minidosisName, header) => {
-  graph.addNode(minidosisName, header)
+parseAllFiles(GRAPH_DIR, (minidosisName, header, contentString) => {
+  const content = parseMarkright(contentString)
+  graph.addNode(minidosisName, header, content)
 })
 
 module.exports = {

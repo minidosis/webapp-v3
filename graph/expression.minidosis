@@ -14,8 +14,7 @@ y produce un solo resultado a partir de varios operandos.
 
 Las expresiones se denominan #md(unary-expression){unarias} si reciben
 solamente un valor de entrada y #md(binary-expression){binarias} si reciben dos.
-En #md(c-lang){C} y #md(cpp-lang){C++} existen un tipo especial de 
-#md(c-ternary-expression){expresión ternaria}, con 3 operandos.
+En #md(c-lang){C} y #md(cpp-lang){C++} existen un tipo especial de #md(c-ternary-expression){expresión ternaria}, con 3 operandos.
 
 
 

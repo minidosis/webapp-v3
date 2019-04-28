@@ -14,6 +14,7 @@
 </script>
 
 <script>
+  import markright from '../../markright';
 	export let node;
 </script>
 
@@ -75,5 +76,11 @@
 {/each}
 </ul>
 
-
+<div class="content">
+{@html markright.genHtml(node.content, {
+  md: (args, children) => {
+    return `<a href=${'conceptos/' + args[0]}>${markright.genHtml(children)}</a>`;
+  }
+})}
+</div>
 
