@@ -211,27 +211,21 @@ const genHtml = (markright, commandObject) => {
   let html = '';
 
   const genNode = (node) => {
-    let html;
-    if (node.type === 'text') {
-      html = node.text + " ";
-    } else if (node.type === 'command') {
-      html = commandObject[node.id](node.args, node.children)
-    }
-    return html;
-  }
-
-  markright.forEach(node => {
     if (node.type === 'paragraph') {
       if (node.children.length === 1) {
-        html += genNode(node.children[0]).trim()
+        genNode(node.children[0])
       } else {
         html += '<p>'
-        html += node.children.map(genNode).join(' ')
+        node.children.forEach(genNode)
         html += '</p>'
       }
+    } else if (node.type === 'text') {
+      html += node.text + '\n'
+    } else if (node.type === 'command') {
+      html += commandObject[node.id](node.args, node.children)
     }
-  })
-
+  }
+  markright.forEach(genNode)
   return html;
 }
 

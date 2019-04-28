@@ -11,3 +11,10 @@ añadir una unidad a una variable de tipo #minidosis(integer-type){entero},
 Hay dos tipos de incremento, pre-incremento y post-incremento, en función de
 cuando se aplica.
 
+Un ejemplo:
+
+#code{
+int a = 1;
+a++; // post-incremento
+++a; // pre-incremento
+}

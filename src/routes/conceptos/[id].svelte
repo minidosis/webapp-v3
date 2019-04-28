@@ -6,7 +6,7 @@
 	  const data = await res.json();
 
 	  if (res.status === 200) {
-	    return { node: data, expanded: false };
+	    return { node: data };
 	  } else {
 	    this.error(res.status, data.message);
 	  }
@@ -63,11 +63,19 @@
 {@html markright.genHtml(node.content, {
   minidosis: (args, children) => {
     return `<a href=${'conceptos/' + args[0]}>${markright.genHtml(children)}</a>`;
+  },
+  code: (args, children) => {
+    // FIXME: Aquí se saca el <p> de #code{...} sacando el primer child del párrafo
+    return `<pre>${markright.genHtml(children[0].children)}</pre>`;
   }
 })}
 </div>
 
-
+<!-- 
+  <pre>
+  {JSON.stringify(node.content, null, 3)}
+  </pre>
+  -->
 
 <style>
   .header {
@@ -75,5 +83,11 @@
   }
   .header h1 {
     margin-bottom: 0;
+  }
+  :global(pre) {
+    padding: .5em .8em;
+    border: 1px solid gray;
+    border-radius: 4px;
+    background: rgb(230, 240, 250);
   }
 </style>
