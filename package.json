@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "minidosis3",
+  "description": "Minidosis v3",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
