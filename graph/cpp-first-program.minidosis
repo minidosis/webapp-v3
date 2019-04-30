@@ -1,0 +1,15 @@
+{
+  title: "El primer programa"
+  children: {
+    statement
+  }
+}
+
+Copia el siguiente texto en tu editor:
+
+#code(c++){
+include <iostream>
+using namespace std;
+
+asdfa asdf asdf 
+}
