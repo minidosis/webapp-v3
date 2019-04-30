@@ -1,0 +1,9 @@
+{
+  title: "Intérprete"
+  bases: { program }
+}
+
+Un intérprete ejecuta programas escritos en un lenguaje de programación
+sin traducirlos a @minidosis(machine-code){código máquina}.
+
+Ejemplos de lenguajes interpretados son @minidosis(python-lang){Python}, @minidosis(ruby-lang){Ruby}, etc.

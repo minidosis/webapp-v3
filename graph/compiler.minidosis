@@ -1,0 +1,23 @@
+{
+  title: "El Compilador"
+  bases: { program }
+}
+
+Un compilador traduce @minidosis(source-code){código fuente} a 
+@minidosis(machine-code){código máquina}. La entrada del compilador es una
+descripción en forma textual de un programa, con el formato especificado por
+cierto @minidosis(prog-lang){lenguaje de programación} concreto, y la salida es
+un programa equivalente pero en un lenguaje que la máquina puede ejecutar
+directamente.
+
+Es importante recordar que un compilador es (simplemente) un @minidosis(program){programa}.
+
+En general, muchos lenguajes de programación estan estandarizados. El estándar
+de un lenguaje documenta el conjunto de reglas que describen qué estructura
+deben tener los programas y cómo éstos se comportan al ejecutarse. Típicamente,
+existen luego diversas implementaciones del lenguaje, es decir, varios
+compiladores distintos que compilan programas siguiendo el estándar.
+
+Existen estándares para @minidosis(c-lang){C}, @minidosis(cpp-lang){C++}, 
+@minidosis(js-lang){Javascript}, @minidosis(lisp-lang){Lisp}, etc.
+

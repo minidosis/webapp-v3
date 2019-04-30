@@ -1,0 +1,6 @@
+{
+  title: "Código Fuente"
+}
+
+El código fuente es el código que escribe el programador y que luego se 
+@minidosis(compiler){compila} a @minidosis(machine-code){código máquina}.
