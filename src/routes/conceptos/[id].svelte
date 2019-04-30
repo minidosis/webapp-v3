@@ -29,18 +29,19 @@
     return result;
   }
 
+  const simpleCommand = (tag) => 
+    (args, children) => `<${tag}>${children.join(' ')}</${tag}>`
+
   function generateHtml(mr) {
     return markright.genHtml(mr, {
-      minidosis: (args, children) => {
-        return `<a href="${'conceptos/' + args[0]}">${generateHtml(children)}</a>`;
-      },
-      code: (args, children) => {
-        return `<span class="code">${children.join(' ')}</span>`;
-      },
       pre: (args, children) => {
         const text = children.join('\n');
         return `<pre>${escape(text)}</pre>`;
-      }
+      },
+      minidosis: (args, children) => `<a href="${'conceptos/' + args[0]}">${generateHtml(children)}</a>`,
+      code:      (args, children) => `<span class="code">${children.join(' ')}</span>`,
+      b:  simpleCommand('b'),
+      h2: simpleCommand('h2'),
     })
   }
 </script>
@@ -106,6 +107,11 @@
     margin-bottom: 0;
   }
 
+  .content :global(h2) {
+    margin-top: 1.0em;
+    font-size: 1.5em;
+    margin-bottom: 0;
+  }
   .content :global(a) {
     text-decoration: none;
     color: rgb(28, 88, 167);
