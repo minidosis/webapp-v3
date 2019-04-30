@@ -109,7 +109,6 @@ const graph = new Graph()
 graph.read()
 
 fs.watch(GRAPH_DIR, (eventType, filename) => {
-  console.log("Re-reading graph");
   graph.read()
 })
 
