@@ -39,9 +39,13 @@ const tests = [
     output: `["a a a a ","b",null,"d","e",{"cmd":"xxx","args":["1","2","3"],"text":["a",null,"b"]}]`
   },
   {
-    input: '#code{int #main()[ int a = 1; ]}',
+    input: '#code{int #main()<<< int a = 1; >>>}',
     output: '[{"cmd":"code","text":["int ",{"cmd":"main","text":[" int a = 1; "]}]}]'
-  } 
+  },
+  {
+    input: '#code<<<int main() { int a = 1; }>>>',
+    output: '[{"cmd":"code","text":["int main() { int a = 1; }"]}]'
+  },
 ]
 
 for (let test of tests) {

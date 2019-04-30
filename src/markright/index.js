@@ -25,11 +25,13 @@ class Parser {
     this.pos++
   }
 
-  expect(ch) {
-    if (!this.ok() || !this.at(ch)) {
-      this.error(`Expected '${ch}'`);
+  expect(str) {
+    if (!this.ok() || !this.at(str)) {
+      this.error(`Expected '${str}'`);
     }
-    this.next()
+    for (let i = 0; i < str.length; i++) {
+      this.next()
+    }
   }
 
   parseIdent() {
