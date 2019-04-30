@@ -31,6 +31,14 @@ const tests = [
     output: '["abc",null,"def"]'
   },
   {
+    input: 'abc\n\n\ndef',
+    output: '["abc",null,null,"def"]'
+  },
+  {
+    input: 'abc\n\n\n\ndef',
+    output: '["abc",null,null,null,"def"]'
+  },
+  {
     input: 'abc\n    \ndef',
     output: '["abc",null,"def"]'
   },
