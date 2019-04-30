@@ -12,10 +12,9 @@ En un lenguaje de programación, una expresión es una fórmula que
 calcula un valor a partir de otros. La expresión representa un cálculo,
 y produce un solo resultado a partir de varios operandos.
 
-Las expresiones se denominan #minidosis(unary-expression){unarias} si reciben
-solamente un valor de entrada y #minidosis(binary-expression){binarias} si reciben dos.
-En #minidosis(c-lang){C} y #minidosis(cpp-lang){C++} existen un tipo especial de 
-#minidosis(c-ternary-expression){expresión ternaria}, con 3 operandos.
+Las expresiones se denominan @minidosis(unary-expression){unarias} si reciben
+solamente un valor de entrada y @minidosis(binary-expression){binarias} si reciben dos.
+En @minidosis(c-lang){C} y @minidosis(cpp-lang){C++} existen un tipo especial de @minidosis(c-ternary-expression){expresión ternaria}, con 3 operandos.
 
 
 

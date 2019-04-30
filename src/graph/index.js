@@ -5,11 +5,11 @@ const { parse: parseMarkright } = require('../markright')
 const GRAPH_DIR = './graph'
 
 const LinkTypeArray = ['None', 'Base', 'Derived', 'Child', 'Parent', 'Related']
-const listName = { 
+const listName = {
   Base: 'bases', Derived: 'derived',
   Child: 'children', Parent: 'parents',
-  Related: 'related', 
- }
+  Related: 'related',
+}
 const LinkType = LinkTypeArray.reduce((typ, val) => { typ[val] = val; return typ; }, {})
 
 class Node {
@@ -23,9 +23,9 @@ class Node {
   show() {
     const $ = (s) => console.log(s)
     const links = { Base: [], Child: [], Related: [] }
-    this.links.forEach((type, id) => { 
+    this.links.forEach((type, id) => {
       if (type in links) {
-        links[type].push(id) 
+        links[type].push(id)
       }
     })
 
@@ -87,21 +87,25 @@ class Graph {
       }
     }
 
-    add_links(bases,    LinkType.Base,    LinkType.Derived)
-    add_links(children, LinkType.Child,   LinkType.Parent)
-    add_links(related,  LinkType.Related, LinkType.Related)
+    add_links(bases, LinkType.Base, LinkType.Derived)
+    add_links(children, LinkType.Child, LinkType.Parent)
+    add_links(related, LinkType.Related, LinkType.Related)
   }
 
   show() {
     this.nodes.forEach(node => node.show())
   }
+
+  read() {
+    parseAllFiles(GRAPH_DIR, (minidosisName, header, contentString) => {
+      const content = parseMarkright(contentString)
+      this.addNode(minidosisName, header, content)
+    })
+  }
 }
 
-const graph = new Graph();
-parseAllFiles(GRAPH_DIR, (minidosisName, header, contentString) => {
-  const content = parseMarkright(contentString)
-  graph.addNode(minidosisName, header, content)
-})
+const graph = new Graph()
+graph.read()
 
 module.exports = {
   graph

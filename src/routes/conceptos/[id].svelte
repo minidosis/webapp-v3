@@ -1,10 +1,7 @@
 <script context="module">
 	export async function preload({ params, query }) {
-	  // the `id` parameter is available because
-	  // this file is called [id].svelte
-	  const res = await this.fetch(`conceptos/${params.id}.json`);
-	  const data = await res.json();
-
+    const res = await this.fetch(`conceptos/${params.id}.json`);
+    const data = await res.json();
 	  if (res.status === 200) {
 	    return { node: data };
 	  } else {
@@ -19,6 +16,33 @@
   let expanded = false;
 
   const toggleExpanded = () => { expanded = !expanded }
+
+  function escape(str) {
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+      switch (str[i]) {
+        case '<': result += '&lt;'; break;
+        case '>': result += '&gt;'; break;
+        default: result += str[i];
+      }
+    }
+    return result;
+  }
+
+  function generateHtml(mr) {
+    return markright.genHtml(mr, {
+      minidosis: (args, children) => {
+        return `<a href="${'conceptos/' + args[0]}">${generateHtml(children)}</a>`;
+      },
+      c: (args, children) => {
+        return `<span class="code">${children.join(' ')}</span>`;
+      },
+      code: (args, children) => {
+        const text = children.join('\n');
+        return `<pre>${escape(text)}</pre>`;
+      }
+    })
+  }
 </script>
 
 <svelte:head>
@@ -60,23 +84,20 @@
 {/if}
 
 <div class="content">
-{@html markright.genHtml(node.content, {
-  minidosis: (args, children) => {
-    return `<a href=${'conceptos/' + args[0]}>${markright.genHtml(children)}</a>`;
-  },
-  code: (args, children) => {
-    // FIXME: Aquí se saca el <p> de #code{...} sacando el primer child del párrafo
-    return `<pre>${markright.genHtml(children[0].children)}</pre>`;
-  }
-})}
+{@html generateHtml(node.content)}
 </div>
 
-<!-- 
-  <pre>
-  {JSON.stringify(node.content, null, 3)}
-  </pre>
-  -->
+<!--
 
+<pre>
+{JSON.stringify(node.content, null, 3)}
+</pre>
+
+<pre>
+{generateHtml(node.content)}
+</pre>
+
+-->
 <style>
   .header {
     margin-bottom: 1em;
@@ -89,5 +110,8 @@
     border: 1px solid gray;
     border-radius: 4px;
     background: rgb(230, 240, 250);
+  }
+  :global(span.code) {
+    font-family: monospace;
   }
 </style>
