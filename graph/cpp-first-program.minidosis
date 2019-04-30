@@ -7,7 +7,7 @@
 
 Copia el siguiente texto en tu editor:
 
-@code(c++)[[
+@pre(c++)[[
 #include <iostream>
 using namespace std;
 

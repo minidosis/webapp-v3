@@ -34,10 +34,10 @@
       minidosis: (args, children) => {
         return `<a href="${'conceptos/' + args[0]}">${generateHtml(children)}</a>`;
       },
-      c: (args, children) => {
+      code: (args, children) => {
         return `<span class="code">${children.join(' ')}</span>`;
       },
-      code: (args, children) => {
+      pre: (args, children) => {
         const text = children.join('\n');
         return `<pre>${escape(text)}</pre>`;
       }
@@ -105,9 +105,22 @@
   .header h1 {
     margin-bottom: 0;
   }
+
+  .content :global(a) {
+    text-decoration: none;
+    color: rgb(28, 88, 167);
+    border-bottom: 1px solid rgb(199, 216, 231);
+  }
+  .content :global(a:hover) {
+    color: black;
+  }
+  .content :global(p) {
+    margin-bottom: .4em;
+  }
   :global(pre) {
-    padding: .5em .8em;
-    border: 1px solid gray;
+    margin-top: 0;
+    padding: .3em .6em;
+    border: 1px solid rgb(200, 214, 228);
     border-radius: 4px;
     background: rgb(230, 240, 250);
   }

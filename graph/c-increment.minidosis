@@ -5,14 +5,14 @@
 }
 
 El incremento en @minidosis(c-lang){C} (y @minidosis(cpp-lang){C++}) permite
-añadir una unidad a una variable de tipo @minidosis(integer-type){@c{int}}, 
-@minidosis(float-type){@c{float}}, o @minidosis(double-type){@c{double}}.
+añadir una unidad a una variable de tipo @minidosis(integer-type){@code{int}}, 
+@minidosis(float-type){@code{float}}, o @minidosis(double-type){@code{double}}.
 
 Hay dos tipos de incremento, pre-incremento y post-incremento, en función de
 cuando se aplica.
 
 Un ejemplo:
-@code(c++)[[
+@pre(c++)[[
 int a = 1;
 a++; // post-incremento
 ++a; // pre-incremento
