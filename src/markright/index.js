@@ -1,4 +1,7 @@
 
+// TODO: Permitir una directiva que cambie el CONTROL_CHARACTER
+const CONTROL_CHARACTER = '@'
+
 class Parser {
   constructor(input) {
     this.input = input;
@@ -74,7 +77,7 @@ class Parser {
   }
 
   parseCommand() {
-    this.expect('#')
+    this.expect(CONTROL_CHARACTER)
     let result = {};
     result.cmd = this.parseIdent()
     if (this.at('(')) {
@@ -120,12 +123,14 @@ class Parser {
           newline = true;
           break
 
-        case '#':
-          if (this.at('##')) {
-            text += '#'
+        case CONTROL_CHARACTER:
+          if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
+            text += CONTROL_CHARACTER
             this.next(2)
           } else {
-            addPendingText()
+            if (text.length > 0) {
+              addPendingText()
+            }
             result.push(this.parseCommand())
             newline = false
           }
@@ -144,8 +149,44 @@ class Parser {
   }
 }
 
-const parse = (str) => new Parser(str).parse()
+const parse = (str) => {
+  try {
+    const parser = new Parser(str);
+    return parser.parse()
+  } catch (e) {
+    return { error: e }
+  }
+}
+
+const genHtml = (markright, commandObject) => {
+  // Hasta que no veamos un null, el texto es 'inline'
+  // En el momento que vemos un null, entonces pasamos a usar '<p>' 
+  let html = '', paragraph = '', lastText = false, inline = true;
+  for (let node of markright) {
+    if (typeof node === 'string') {
+      paragraph += (lastText ? '\n' : '') + node
+    } else if (node == null) {
+      inline = false;
+      html += '<p>' + paragraph + '</p>\n'
+      paragraph = ''
+    } else if (typeof node === 'object') {
+      paragraph += commandObject[node.cmd](node.args, node.text)
+    } else {
+      throw new Error(`genHtml: unrecognized type of node`)
+    }
+    lastText = (typeof node === 'string')
+  }
+  if (inline) {
+    return paragraph;
+  } else {
+    if (paragraph.length > 0) {
+      html += '<p>' + paragraph + '</p>\n'
+    }
+    return html
+  }
+}
 
 module.exports = {
-  parse
+  parse,
+  genHtml,
 }
