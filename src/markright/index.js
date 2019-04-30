@@ -8,9 +8,9 @@ class Parser {
 
   error(msg) { throw new Error(msg); }
 
-  ok()   { return this.pos < this.input.length }
-  curr() { return this.input[this.pos] }
-  at(ch) { return this.curr() === ch }
+  ok()    { return this.pos < this.input.length }
+  curr()  { return this.input[this.pos] }
+  at(str) { return this.input.slice(this.pos, this.pos + str.length) === str }
 
   next() {
     if (!this.ok()) {
@@ -53,6 +53,24 @@ class Parser {
     return args;
   }
 
+  parseOpenDelimiter() {
+    const D = "{}[]<>";
+    const opD = [...D].filter((_, i) => i % 2 == 0).join('');
+
+    const isOpenDelim = ch => opD.indexOf(ch) !== -1
+    const makeInverseDelim = str => [...str].reverse().map(x => D[D.indexOf(x)+1]).join('')
+
+    let delim = ''
+    while (isOpenDelim(this.curr())) {
+      delim += this.curr()
+      this.next()
+    }
+    return (delim.length === 0 ? null : {
+      open: delim,
+      close: makeInverseDelim(delim),
+    })
+  }
+
   parseCommand() {
     this.expect('#')
     let result = {};
@@ -63,10 +81,10 @@ class Parser {
         result.args = args
       }
     }
-    if (this.at('{')) {
-      this.expect('{')
-      let text = this.parse()
-      this.expect('}')
+    let delim = this.parseOpenDelimiter();
+    if (delim) {
+      let text = this.parse(delim.close)
+      this.expect(delim.close)
       if (text.length > 0) {
         result.text = text
       }
@@ -74,10 +92,9 @@ class Parser {
     return result
   }
 
-  parse() {
+  parse(closeDelim) {
     let result = []
     let text = '';
-    let finish = false;
     let newline = false;
 
     const addPendingText = (add = '') => {
@@ -90,12 +107,11 @@ class Parser {
       text = '';
     }
 
-    while (!finish && this.ok()) {
+    while (this.ok()) {
+      if (closeDelim && this.at(closeDelim)) {
+        break
+      }
       switch (this.curr()) {
-        case '}':
-          finish = true
-          break
-
         case '\n':
           addPendingText()
           this.next()

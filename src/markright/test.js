@@ -40,7 +40,7 @@ const tests = [
   },
   {
     input: '#code{int #main()[ int a = 1; ]}',
-    output: '[{"cmd":"code","text":["int ",{"cmd":"main"},"[ int a = 1; ]"]}]'
+    output: '[{"cmd":"code","text":["int ",{"cmd":"main","text":[" int a = 1; "]}]}]'
   } 
 ]
 
