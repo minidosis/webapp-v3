@@ -7,6 +7,10 @@ const tests = [
     output: `[{"cmd":"a"},{"cmd":"b"},{"cmd":"c"}]`
   },
   {
+    input: '#a###b',
+    output: `[{"cmd":"a"},"#",{"cmd":"b"}]`
+  },
+  {
     input: `abc#d efg`,
     output: `["abc",{"cmd":"d"}," efg"]`
   },
@@ -45,6 +49,10 @@ const tests = [
   {
     input: '#code<<<int main() { int a = 1; }>>>',
     output: '[{"cmd":"code","text":["int main() { int a = 1; }"]}]'
+  },
+  {
+    input: '#code<<<##include <iostream>;\nusing namespace std;\n\nint main() { cout << "hi"; }>>>',
+    output: '[{"cmd":"code","text":["#include <iostream>;","using namespace std;",null,"int main() { cout << \\"hi\\"; }"]}]'
   },
 ]
 

@@ -12,26 +12,26 @@ class Parser {
   curr()  { return this.input[this.pos] }
   at(str) { return this.input.slice(this.pos, this.pos + str.length) === str }
 
-  next() {
-    if (!this.ok()) {
-      return false
+  next(n = 1) {
+    for (let i = 0; i < n; i++) {
+      if (!this.ok()) {
+        return false
+      }
+      if (this.curr() == '\n') {
+        this.lin++;
+        this.col = 1;
+      } else {
+        this.col++;
+      }
+      this.pos++
     }
-    if (this.curr() == '\n') {
-      this.lin++;
-      this.col = 1;
-    } else {
-      this.col++;
-    }
-    this.pos++
   }
 
   expect(str) {
     if (!this.ok() || !this.at(str)) {
       this.error(`Expected '${str}'`);
     }
-    for (let i = 0; i < str.length; i++) {
-      this.next()
-    }
+    this.next(str.length)
   }
 
   parseIdent() {
@@ -121,9 +121,14 @@ class Parser {
           break
 
         case '#':
-          addPendingText()
-          result.push(this.parseCommand())
-          newline = false
+          if (this.at('##')) {
+            text += '#'
+            this.next(2)
+          } else {
+            addPendingText()
+            result.push(this.parseCommand())
+            newline = false
+          }
           break
 
         default:
