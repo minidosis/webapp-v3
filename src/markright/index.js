@@ -116,30 +116,25 @@ class Parser {
       if (closeDelim && this.at(closeDelim)) {
         break
       }
-      switch (this.curr()) {
-        case '\n':
+      if (this.at('\n')) {
+        addPendingText()
+        this.next()
+        newline = true;
+      } 
+      else if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
+        text += CONTROL_CHARACTER
+        this.next(2)
+      }
+      else if (this.at(CONTROL_CHARACTER)) {
+        if (text.length > 0) {
           addPendingText()
-          this.next()
-          newline = true;
-          break
-
-        case CONTROL_CHARACTER:
-          if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
-            text += CONTROL_CHARACTER
-            this.next(2)
-          } else {
-            if (text.length > 0) {
-              addPendingText()
-            }
-            result.push(this.parseCommand())
-            newline = false
-          }
-          break
-
-        default:
-          text += this.curr()
-          this.next()
-          break
+        }
+        result.push(this.parseCommand())
+        newline = false
+      }
+      else {
+        text += this.curr()
+        this.next()
       }
     }
     if (text.length > 0) {
