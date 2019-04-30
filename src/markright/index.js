@@ -117,8 +117,11 @@ class Parser {
         break
       }
       if (this.at('\n')) {
-        addPendingText()
         this.next()
+        if (this.at(CONTROL_CHARACTER)) {
+          text += ' ' // put a space separator when a command starts at beginning of line
+        }
+        addPendingText()
         newline = true;
       } 
       else if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {

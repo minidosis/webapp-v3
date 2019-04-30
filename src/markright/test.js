@@ -64,7 +64,11 @@ const tests = [
   },
   {
     input: 'abc\n@d{e}\n',
-    output: '["abc",{"cmd":"d","text":["e"]}]'
+    output: '["abc ",{"cmd":"d","text":["e"]}]'
+  },
+  {
+    input: 'abc\n\n@d{e}\n',
+    output: '["abc",null,{"cmd":"d","text":["e"]}]'
   },
 ]
 
