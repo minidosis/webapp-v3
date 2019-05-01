@@ -1,8 +1,0 @@
-{
-  title: "Lenguaje de Programación"
-  children: { expression statement control-statement mem-value type }
-}
-
-Existen muchos tipos de lenguajes de programación, pero los lenguajes que los
-ordenadores pueden ejecutar directamente son @minidosis(machine-code){lenguajes máquina}.
-El resto de lenguajes son @minidosis(interpreter){interpretados} o @minidosis(compiler){compilados}.
