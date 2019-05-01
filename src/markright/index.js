@@ -156,29 +156,29 @@ const parse = (str) => {
   }
 }
 
-const genHtml = (markright, commandObject) => {
+const genHtml = (markright, commandFuncs) => {
   // Hasta que no veamos un null, el texto es 'inline'
   // En el momento que vemos un null, entonces pasamos a usar '<p>' 
-  let html = '', paragraph = '', lastText = false, inline = true;
+  let html = '', paragraph = '', lastWasText = false, inline = true;
   for (let node of markright) {
     if (typeof node === 'string') {
-      paragraph += (lastText ? '\n' : '') + node
+      paragraph += (lastWasText ? '\n' : '') + node
     } else if (node == null) {
       inline = false;
-      html += '<p>' + paragraph + '</p>\n'
+      html += `<p>${paragraph}</p>\n`
       paragraph = ''
     } else if (typeof node === 'object') {
-      paragraph += commandObject[node.cmd](node.args, node.text)
+      paragraph += commandFuncs[node.cmd](node.args, node.text)
     } else {
       throw new Error(`genHtml: unrecognized type of node`)
     }
-    lastText = (typeof node === 'string')
+    lastWasText = (typeof node === 'string')
   }
   if (inline) {
     return paragraph;
   } else {
     if (paragraph.length > 0) {
-      html += '<p>' + paragraph + '</p>\n'
+      html += `<p>${paragraph}</p>\n`
     }
     return html
   }
