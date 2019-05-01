@@ -176,12 +176,11 @@ const genHtml = (markright, commandFuncs) => {
   }
   if (inline) {
     return paragraph;
-  } else {
-    if (paragraph.length > 0) {
-      html += `<p>${paragraph}</p>\n`
-    }
-    return html
   }
+  if (paragraph.length > 0) {
+    html += `<p>${paragraph}</p>\n`
+  }
+  return html
 }
 
 module.exports = {
