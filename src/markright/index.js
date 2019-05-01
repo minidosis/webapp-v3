@@ -16,6 +16,8 @@ class Parser {
   curr()  { return this.input[this.pos] }
   at(str) { return this.input.slice(this.pos, this.pos + str.length) === str }
 
+  notAtSpace() { return this.ok() && !/\s/.test(this.curr()) }
+
   next(n = 1) {
     for (let i = 0; i < n; i++) {
       if (!this.ok()) {
@@ -103,6 +105,11 @@ class Parser {
     let text = '';
     let newline = false;
 
+    const lastIsCommand = () => {
+      const i = result.length - 1;
+      return i >= 0 && result[i] !== null && typeof result[i] === 'object';
+    }
+
     const addPendingText = () => {
       if (text.length > 0) {
         result.push(text)
@@ -125,7 +132,6 @@ class Parser {
         let cmd = this.parseCommand()
         if (this.commandFuncs && cmd.id in this.commandFuncs) {
           cmd = this.commandFuncs[cmd.id](cmd)
-          console.log(cmd)
         }
         result.push(cmd)
         newline = false
@@ -133,7 +139,8 @@ class Parser {
       else if (this.at('\n')) {
         this.next()
         if (this.at(CONTROL_CHARACTER)) {
-          text += ' ' // put a space separator when a command starts at beginning of line
+          // put a space separator when a command starts at beginning of line
+          text += ' ' 
         }
         const allSpaces = /^\s*$/.test(text)
         if (allSpaces && newline) {
@@ -143,6 +150,10 @@ class Parser {
           addPendingText()
         }
         newline = true;
+        if (this.notAtSpace() && lastIsCommand()) {
+          // Meter un espacio entre un comando a final de línea y el texto que le sigue
+          text += ' '
+        }
       } else {
         text += this.curr()
         this.next()

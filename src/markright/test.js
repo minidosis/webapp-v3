@@ -70,6 +70,10 @@ const tests = [
     input: 'abc\n\n@d{e}\n',
     output: '["abc",null,{"id":"d","text":["e"]}]'
   },
+  {
+    input: 'abc @d{e}\nfgh',
+    output: '["abc ",{"id":"d","text":["e"]}," fgh"]'
+  }
 ]
 
 for (let test of tests) {
