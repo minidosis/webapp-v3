@@ -115,7 +115,16 @@ class Parser {
       if (closeDelim && this.at(closeDelim)) {
         break
       }
-      if (this.at('\n')) {
+      if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
+        text += CONTROL_CHARACTER
+        this.next(2)
+      }
+      else if (this.at(CONTROL_CHARACTER)) {
+        addPendingText()
+        result.push(this.parseCommand())
+        newline = false
+      } 
+      else if (this.at('\n')) {
         this.next()
         if (this.at(CONTROL_CHARACTER)) {
           text += ' ' // put a space separator when a command starts at beginning of line
@@ -128,17 +137,7 @@ class Parser {
           addPendingText()
         }
         newline = true;
-      } 
-      else if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
-        text += CONTROL_CHARACTER
-        this.next(2)
-      }
-      else if (this.at(CONTROL_CHARACTER)) {
-        addPendingText()
-        result.push(this.parseCommand())
-        newline = false
-      }
-      else {
+      } else {
         text += this.curr()
         this.next()
       }
