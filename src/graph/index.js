@@ -1,7 +1,8 @@
 
 const fs = require('fs')
+const uuid = require('uuid/v1')
 const { parseAllFiles } = require('./parser')
-const { parse: parseMarkright } = require('../markright')
+const markright = require('../markright')
 
 const GRAPH_DIR = '/home/pauek/MiniDosis/graph'
 
@@ -59,11 +60,11 @@ class Node {
 
 class Graph {
   constructor() {
-    this.nodes = new Map();
     this.read()
   }
 
-  has(id) { return this.nodes.has(id); }
+  has(id)      { return this.nodes.has(id) }
+  hasImage(id) { return this.images.has(id) }
 
   get(id, filename) {
     if (!this.nodes.has(id)) {
@@ -74,6 +75,8 @@ class Graph {
     }
     return this.nodes.get(id);
   }
+
+  getImage(id) { return this.images.get(id) }
 
   forEachNode(callback) {
     this.nodes.forEach((node, id) => callback(id, node));
@@ -104,9 +107,22 @@ class Graph {
     this.nodes.forEach(node => node.show())
   }
 
+  getImageHash(path) {
+    const id = uuid()
+    const abspath = GRAPH_DIR + '/' + path
+    this.images.set(id, abspath)
+    return id
+  }
+
   read() {
+    this.nodes = new Map();
+    this.images = new Map();
     parseAllFiles(GRAPH_DIR, (filename, minidosisName, header, contentString) => {
-      const content = parseMarkright(contentString)
+      const content = markright.parse(contentString, {
+        img: ({ args, text: path }) => ({
+          id: 'img', text: [this.getImageHash(path)]
+        })
+      })
       this.addNode(GRAPH_DIR + '/' + filename, minidosisName, header, content)
     })
   }

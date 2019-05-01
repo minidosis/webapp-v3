@@ -1,15 +1,17 @@
+import fs from 'fs';
 import { graph } from '../../graph';
 
+
 export function get(req, res) {
-	// the `id` parameter is available because
-	// this file is called [id].json.js
   const { id } = req.params;
-  
-  if (graph.has(id)) {
-		res.writeHead(200, {
-			'Content-Type': 'application/json'
+
+  if (graph.hasImage(id)) {
+    const imagePath = graph.getImage(id)
+    var imgData = fs.readFileSync(imagePath);
+    res.writeHead(200, {
+      'Content-Type': 'image/jpg' 
     });
-		res.end(graph.get(id).toJson());
+    res.end(imgData, 'binary');
   } 
   else {
 		res.writeHead(404, {
@@ -19,4 +21,5 @@ export function get(req, res) {
 			message: `No he encontrado el nodo ${id}`
 		}));
   }
+
 }

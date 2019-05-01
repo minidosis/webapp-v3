@@ -122,9 +122,10 @@ class Parser {
       }
       else if (this.at(CONTROL_CHARACTER)) {
         addPendingText()
-        const cmd = this.parseCommand()
+        let cmd = this.parseCommand()
         if (this.commandFuncs && cmd.id in this.commandFuncs) {
           cmd = this.commandFuncs[cmd.id](cmd)
+          console.log(cmd)
         }
         result.push(cmd)
         newline = false
@@ -157,6 +158,7 @@ const parse = (str, commandFuncs) => {
     const parser = new Parser(str, commandFuncs);
     return parser.parse()
   } catch (e) {
+    console.log("Error parsing markright:", e)
     return { error: e }
   }
 }
@@ -173,7 +175,11 @@ const genHtml = (markright, commandFuncs) => {
       html += `<p>${paragraph}</p>\n`
       paragraph = ''
     } else if (typeof node === 'object') {
-      paragraph += commandFuncs[node.id](node.args, node.text)
+      if (commandFuncs && node.id in commandFuncs) {
+        paragraph += commandFuncs[node.id](node.args, node.text)
+      } else {
+        paragraph += `<span class="error">Command <b>${node.id}</b> not found</span>`
+      }
     } else {
       throw new Error(`genHtml: unrecognized type of node`)
     }

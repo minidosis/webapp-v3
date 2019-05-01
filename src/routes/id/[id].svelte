@@ -39,6 +39,7 @@
       code:      (args, children) => `<span class="code">${children.join(' ')}</span>`,
       b:  simpleCommand('b'),
       h2: simpleCommand('h2'),
+      img: (args, children) => `<img src="asset/${children[0]}" />`,
     })
   }
 </script>
@@ -131,5 +132,10 @@
   }
   :global(span.code) {
     font-family: monospace;
+  }
+  :global(span.error) {
+    padding: .3em .5em;
+    background-color: red;
+    color: white;
   }
 </style>
