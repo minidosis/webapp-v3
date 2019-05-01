@@ -35,7 +35,14 @@
   function generateHtml(mr) {
     return markright.genHtml(mr, {
       minidosis: (args, children) => `<a href="${'id/' + args[0]}">${generateHtml(children)}</a>`,
-      pre:       (args, children) => `<pre>${escape(children.join('\n'))}</pre>`,
+      pre:       (args, children) => {
+        const display = args.find(a => a === 'display');
+        if (display) {
+          return `<div class="display"><pre>${escape(children.join('\n'))}</pre></div>`
+        } else {
+          return `<pre>${escape(children.join('\n'))}</pre>`
+        }
+      },
       code:      (args, children) => `<span class="code">${children.join(' ')}</span>`,
       b:  simpleCommand('b'),
       h2: simpleCommand('h2'),
@@ -51,8 +58,6 @@
 <div class="header">
   <h1>{node.title} <button on:click={toggleExpanded}>{expanded ? 'hide' : 'show'}</button> </h1>
 </div>
-
-<p>{node.filename}</p>
 
 {#if expanded}
   <h2>Padres</h2>
@@ -106,7 +111,6 @@
   .header h1 {
     margin-bottom: 0;
   }
-
   .content :global(h2) {
     margin-top: 1.0em;
     font-size: 1.5em;
@@ -130,6 +134,16 @@
     border-radius: 4px;
     background: rgb(230, 240, 250);
   }
+  :global(.display) {
+    display: flex;
+    justify-content: center;
+  }
+  :global(.display pre) {
+    display: inline-block;
+    font-size: 130%;
+    background: rgb(240, 247, 199);
+    border: 1px solid rgb(226, 224, 189);
+  }
   :global(span.code) {
     font-family: monospace;
   }
@@ -137,5 +151,8 @@
     padding: .3em .5em;
     background-color: red;
     color: white;
+  }
+  :global(img) {
+    width: 100%;
   }
 </style>

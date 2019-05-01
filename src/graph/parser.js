@@ -1,12 +1,9 @@
 
 const fs = require('fs');
 
-const fatal = (msg) => {
-  console.error(msg)
-  process.exit(1)
-}
+const error = (msg) => { throw new Error(msg) }
 
-const fileContent = (filename) => String(fs.readFileSync(filename))
+const readFile = (filename) => String(fs.readFileSync(filename))
 
 const findPairedBrace = (str, pos) => {
   if (str[pos] !== '{') {
@@ -27,7 +24,7 @@ const findPairedBrace = (str, pos) => {
 }
 
 const splitHeader = (filename) => {
-  const str = fileContent(filename)
+  const str = readFile(filename)
   const end = findPairedBrace(str, 0);
   return {
     header: (end === -1 ? [] : str.slice(0, end+1)),
@@ -47,7 +44,7 @@ const skipSpaces = (str, pos) => {
 const parseString = (str, pos) => {
   const inipos = pos;
   if (str[pos] !== '"') {
-    fatal(`Parse error: Expected '"' at start of string`)
+    error(`Parse error: Expected '"' at start of string`)
   }
   pos++;
   while (pos < str.length) {
@@ -58,13 +55,13 @@ const parseString = (str, pos) => {
     }
     pos++;
   }
-  fatal(`Parse error: unterminated string`)
+  error(`Parse error: unterminated string`)
 }
 
 const parseTree = (str, pos) => {
   let end = findPairedBrace(str, pos);
   if (end == -1) {
-    fatal(`Parse error: Expected '{' at start of tree: "${str}"`)
+    error(`Parse error: Expected '{' at start of tree: "${str}"`)
   }
   let tree = {}, list = [];
   let label = null, symbol = '';
@@ -93,7 +90,7 @@ const parseTree = (str, pos) => {
     } 
     else if (curr === ':') {
       if (label !== null) {
-        fatal(`Parse error: two labels in a row`)
+        error(`Parse error: two labels in a row`)
       }
       label = symbol;
       symbol = '';
@@ -113,7 +110,7 @@ const parseTree = (str, pos) => {
   }
   const nprops = Object.keys(tree).length
   if (nprops > 0 && list.length > 0) {
-    fatal(`A {} is both an object and a list!`)
+    error(`A {} is both an object and a list!`)
   }
   return { tree: (nprops > 0 ? tree : list), pos }
 }
@@ -122,16 +119,21 @@ const parseHeader = (header) => parseTree(header, 0).tree
 
 const minidosisName = (filename) => filename.split('.')[0]
 
+const parseFile = (dir, file, callback) => {
+  const full_path = dir + '/' + file;
+  const { header, content } = splitHeader(full_path)
+  callback(file, minidosisName(file), parseHeader(header), content)
+}
+
 const parseAllFiles = (dir, callback) => {
   let minidosis_files = fs.readdirSync(dir).filter(file => file.endsWith('.minidosis'))
 
   for (let file of minidosis_files) {
-    const full_path = dir + '/' + file;
-    const { header, content } = splitHeader(full_path)
-    callback(file, minidosisName(file), parseHeader(header), content)
+    parseFile(dir, file, callback)
   }
 }
 
 module.exports = {
+  parseFile,
   parseAllFiles
 }

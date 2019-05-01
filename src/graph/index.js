@@ -1,7 +1,7 @@
 
 const fs = require('fs')
-const uuid = require('uuid/v1')
-const { parseAllFiles } = require('./parser')
+const sha1 = require('sha1')
+const { parseFile, parseAllFiles } = require('./parser')
 const markright = require('../markright')
 
 const GRAPH_DIR = '/home/pauek/MiniDosis/graph'
@@ -60,7 +60,7 @@ class Node {
 
 class Graph {
   constructor() {
-    this.read()
+    this.readAll()
   }
 
   has(id)      { return this.nodes.has(id) }
@@ -108,29 +108,43 @@ class Graph {
   }
 
   getImageHash(path) {
-    const id = uuid()
     const abspath = GRAPH_DIR + '/' + path
-    this.images.set(id, abspath)
-    return id
+    const hash = sha1(fs.readFileSync(abspath))
+    this.images.set(hash, abspath)
+    return hash
   }
 
-  read() {
-    this.nodes = new Map();
-    this.images = new Map();
-    parseAllFiles(GRAPH_DIR, (filename, minidosisName, header, contentString) => {
-      const content = markright.parse(contentString, {
-        img: ({ args, text: path }) => ({
-          id: 'img', text: [this.getImageHash(path)]
-        })
+  updateNode(filename, minidosisName, header, contentString) {
+    const content = markright.parse(contentString, {
+      img: ({ args, text: path }) => ({
+        id: 'img', text: [this.getImageHash(path)]
       })
-      this.addNode(GRAPH_DIR + '/' + filename, minidosisName, header, content)
     })
+    this.addNode(GRAPH_DIR + '/' + filename, minidosisName, header, content)
+  }
+
+  readFile(filename) {
+    parseFile(GRAPH_DIR, filename, this.updateNode.bind(this))
+  }
+
+  readAll() {
+    this.nodes = new Map()
+    this.images = new Map()
+    parseAllFiles(GRAPH_DIR, this.updateNode.bind(this))
   }
 }
 
 const graph = new Graph()
 
-fs.watch(GRAPH_DIR, () => graph.read())
+fs.watch(GRAPH_DIR, (event, filename) => {
+  if (event === 'change') {
+    console.log('reading', filename)
+    graph.readFile(filename)
+  } else {
+    console.log('reading all')
+    graph.readAll()
+  }
+})
 
 module.exports = { graph }
 
