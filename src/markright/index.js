@@ -102,15 +102,14 @@ class Parser {
     let text = '';
     let newline = false;
 
-    const addPendingText = (add = '') => {
-      const allSpaces = /^\s*$/.test(text)
-      if (allSpaces && newline) {
-        result.push(null)
-      } else if (text.length > 0) {
-        result.push(text + add)
+    const addPendingText = () => {
+      if (text.length > 0) {
+        result.push(text)
       }
       text = '';
     }
+
+    // TODO: Quitar líneas vacías del principio y del final
 
     while (this.ok()) {
       if (closeDelim && this.at(closeDelim)) {
@@ -121,7 +120,13 @@ class Parser {
         if (this.at(CONTROL_CHARACTER)) {
           text += ' ' // put a space separator when a command starts at beginning of line
         }
-        addPendingText()
+        const allSpaces = /^\s*$/.test(text)
+        if (allSpaces && newline) {
+          result.push(null)
+          text = ''
+        } else {  
+          addPendingText()
+        }
         newline = true;
       } 
       else if (this.at(CONTROL_CHARACTER + CONTROL_CHARACTER)) {
@@ -129,9 +134,7 @@ class Parser {
         this.next(2)
       }
       else if (this.at(CONTROL_CHARACTER)) {
-        if (text.length > 0) {
-          addPendingText()
-        }
+        addPendingText()
         result.push(this.parseCommand())
         newline = false
       }
@@ -140,9 +143,7 @@ class Parser {
         this.next()
       }
     }
-    if (text.length > 0) {
-      addPendingText()
-    }
+    addPendingText()
     return result
   }
 }
