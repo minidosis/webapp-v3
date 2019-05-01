@@ -3,13 +3,14 @@
 const CONTROL_CHARACTER = '@'
 
 class Parser {
-  constructor(input) {
-    this.input = input;
-    this.pos = 0;
-    this.lin = this.col = 1;
+  constructor(input, commandFuncs) {
+    this.input = input
+    this.commandFuncs = commandFuncs
+    this.pos = 0
+    this.lin = this.col = 1
   }
 
-  error(msg) { throw new Error(msg); }
+  error(msg) { throw new Error(msg) }
 
   ok()    { return this.pos < this.input.length }
   curr()  { return this.input[this.pos] }
@@ -21,10 +22,10 @@ class Parser {
         return false
       }
       if (this.curr() == '\n') {
-        this.lin++;
-        this.col = 1;
+        this.lin++
+        this.col = 1
       } else {
-        this.col++;
+        this.col++
       }
       this.pos++
     }
@@ -47,20 +48,20 @@ class Parser {
 
   parseArgs() {
     this.expect('(')
-    let start = this.pos;
+    let start = this.pos
     let end = this.input.indexOf(')', start)
     if (end === -1) {
       this.error(`Parse error: missing closing parenthesis`)
     }
     let args = this.input.slice(start, end).split(',').map(x => x.trim()).filter(x => x.length > 0)
-    this.pos = end;
+    this.pos = end
     this.expect(')')
-    return args;
+    return args
   }
 
   parseOpenDelimiter() {
-    const D = "{}[]<>";
-    const opD = [...D].filter((_, i) => i % 2 == 0).join('');
+    const D = "{}[]<>"
+    const opD = [...D].filter((_, i) => i % 2 == 0).join('')
 
     const isOpenDelim = ch => opD.indexOf(ch) !== -1
     const makeInverseDelim = str => [...str].reverse().map(x => D[D.indexOf(x)+1]).join('')
@@ -78,8 +79,8 @@ class Parser {
 
   parseCommand() {
     this.expect(CONTROL_CHARACTER)
-    let result = {};
-    result.cmd = this.parseIdent()
+    let result = {}
+    result.id = this.parseIdent()
     if (this.at('(')) {
       let args = this.parseArgs()
       if (args.length > 0) {
@@ -121,7 +122,11 @@ class Parser {
       }
       else if (this.at(CONTROL_CHARACTER)) {
         addPendingText()
-        result.push(this.parseCommand())
+        const cmd = this.parseCommand()
+        if (this.commandFuncs && cmd.id in this.commandFuncs) {
+          cmd = this.commandFuncs[cmd.id](cmd)
+        }
+        result.push(cmd)
         newline = false
       } 
       else if (this.at('\n')) {
@@ -147,9 +152,9 @@ class Parser {
   }
 }
 
-const parse = (str) => {
+const parse = (str, commandFuncs) => {
   try {
-    const parser = new Parser(str);
+    const parser = new Parser(str, commandFuncs);
     return parser.parse()
   } catch (e) {
     return { error: e }
@@ -168,7 +173,7 @@ const genHtml = (markright, commandFuncs) => {
       html += `<p>${paragraph}</p>\n`
       paragraph = ''
     } else if (typeof node === 'object') {
-      paragraph += commandFuncs[node.cmd](node.args, node.text)
+      paragraph += commandFuncs[node.id](node.args, node.text)
     } else {
       throw new Error(`genHtml: unrecognized type of node`)
     }

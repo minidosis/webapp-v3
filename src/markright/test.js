@@ -4,27 +4,27 @@ const markright = require('./index.js')
 const tests = [
   {
     input: '@a@b@c',
-    output: `[{"cmd":"a"},{"cmd":"b"},{"cmd":"c"}]`
+    output: `[{"id":"a"},{"id":"b"},{"id":"c"}]`
   },
   {
     input: '@a@@@b',
-    output: `[{"cmd":"a"},"@",{"cmd":"b"}]`
+    output: `[{"id":"a"},"@",{"id":"b"}]`
   },
   {
     input: `abc@d efg`,
-    output: `["abc",{"cmd":"d"}," efg"]`
+    output: `["abc",{"id":"d"}," efg"]`
   },
   {
     input: `abc@d{}efg`,
-    output: `["abc",{"cmd":"d"},"efg"]`
+    output: `["abc",{"id":"d"},"efg"]`
   },
   {
     input: 'abc@d{efg}hij',
-    output: `["abc",{"cmd":"d","text":["efg"]},"hij"]`
+    output: `["abc",{"id":"d","text":["efg"]},"hij"]`
   },
   {
     input: 'abc@x(y,z){efg}hij',
-    output: `["abc",{"cmd":"x","args":["y","z"],"text":["efg"]},"hij"]`
+    output: `["abc",{"id":"x","args":["y","z"],"text":["efg"]},"hij"]`
   },
   {
     input: 'abc\n\ndef',
@@ -48,27 +48,27 @@ const tests = [
   },
   {
     input: 'a a a a \nb\n\nd\ne@xxx(1, 2, 3){a\n\nb}\n',
-    output: `["a a a a ","b",null,"d","e",{"cmd":"xxx","args":["1","2","3"],"text":["a",null,"b"]}]`
+    output: `["a a a a ","b",null,"d","e",{"id":"xxx","args":["1","2","3"],"text":["a",null,"b"]}]`
   },
   {
     input: '@code{int @main()<<< int a = 1; >>>}',
-    output: '[{"cmd":"code","text":["int ",{"cmd":"main","text":[" int a = 1; "]}]}]'
+    output: '[{"id":"code","text":["int ",{"id":"main","text":[" int a = 1; "]}]}]'
   },
   {
     input: '@code<<<int main() { int a = 1; }>>>',
-    output: '[{"cmd":"code","text":["int main() { int a = 1; }"]}]'
+    output: '[{"id":"code","text":["int main() { int a = 1; }"]}]'
   },
   {
     input: '@code<<<@@include <iostream>;\nusing namespace std;\n\nint main() { cout << "hi"; }>>>',
-    output: '[{"cmd":"code","text":["@include <iostream>;","using namespace std;",null,"int main() { cout << \\"hi\\"; }"]}]'
+    output: '[{"id":"code","text":["@include <iostream>;","using namespace std;",null,"int main() { cout << \\"hi\\"; }"]}]'
   },
   {
     input: 'abc\n@d{e}\n',
-    output: '["abc ",{"cmd":"d","text":["e"]}]'
+    output: '["abc ",{"id":"d","text":["e"]}]'
   },
   {
     input: 'abc\n\n@d{e}\n',
-    output: '["abc",null,{"cmd":"d","text":["e"]}]'
+    output: '["abc",null,{"id":"d","text":["e"]}]'
   },
 ]
 
