@@ -128,7 +128,7 @@ const parseAllFiles = (dir, callback) => {
   for (let file of minidosis_files) {
     const full_path = dir + '/' + file;
     const { header, content } = splitHeader(full_path)
-    callback(minidosisName(file), parseHeader(header), content)
+    callback(file, minidosisName(file), parseHeader(header), content)
   }
 }
 

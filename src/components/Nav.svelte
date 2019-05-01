@@ -52,6 +52,6 @@
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>home</a></li>
 		<li><a class='{segment === "about" ? "selected" : ""}' href='about'>about</a></li>
-    <li><a rel=prefetch class='{segment === "conceptos" ? "selected" : ""}' href='conceptos'>conceptos</a></li>
+    <li><a rel=prefetch class='{segment === "id" ? "selected" : ""}' href='id'>conceptos</a></li>
 	</ul>
 </nav>

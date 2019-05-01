@@ -1,6 +1,6 @@
 <script context="module">
 	export function preload({ params, query }) {
-		return this.fetch(`conceptos.json`).then(r => r.json()).then(({ nodes, error }) => {
+		return this.fetch(`id.json`).then(r => r.json()).then(({ nodes, error }) => {
 			return { nodes, error };
 		});
 	}
@@ -16,7 +16,7 @@
   <p>Error {JSON.stringify(error)}</p>
 {:else}
   {#each nodes as node}
-    <li><a href={'conceptos/' + node.id}>{node.title ? node.title : node.id}</a></li>
+    <li><a href={'id/' + node.id}>{node.title ? node.title : node.id}</a></li>
   {/each}
 {/if}
 </ul>

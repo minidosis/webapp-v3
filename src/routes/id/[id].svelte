@@ -1,6 +1,6 @@
 <script context="module">
 	export async function preload({ params, query }) {
-    const res = await this.fetch(`conceptos/${params.id}.json`);
+    const res = await this.fetch(`id/${params.id}.json`);
     const data = await res.json();
 	  if (res.status === 200) {
 	    return { node: data };
@@ -34,11 +34,8 @@
 
   function generateHtml(mr) {
     return markright.genHtml(mr, {
-      pre: (args, children) => {
-        const text = children.join('\n');
-        return `<pre>${escape(text)}</pre>`;
-      },
-      minidosis: (args, children) => `<a href="${'conceptos/' + args[0]}">${generateHtml(children)}</a>`,
+      minidosis: (args, children) => `<a href="${'id/' + args[0]}">${generateHtml(children)}</a>`,
+      pre:       (args, children) => `<pre>${escape(children.join('\n'))}</pre>`,
       code:      (args, children) => `<span class="code">${children.join(' ')}</span>`,
       b:  simpleCommand('b'),
       h2: simpleCommand('h2'),
@@ -54,32 +51,34 @@
   <h1>{node.title} <button on:click={toggleExpanded}>{expanded ? 'hide' : 'show'}</button> </h1>
 </div>
 
+<p>{node.filename}</p>
+
 {#if expanded}
   <h2>Padres</h2>
   <ul>
     {#each node.parents as parent}
-      <li><a href={'conceptos/' + parent.id}>{parent.title}</a></li>
+      <li><a href={'id/' + parent.id}>{parent.title}</a></li>
     {/each}
   </ul>
 
   <h2>Bases</h2>
   <ul>
     {#each node.bases as base}
-      <li><a href={'conceptos/' + base.id}>{base.title}</a></li>
+      <li><a href={'id/' + base.id}>{base.title}</a></li>
     {/each}
   </ul>
 
   <h2>Derivados</h2>
   <ul>
     {#each node.derived as deriv}
-      <li><a href={'conceptos/' + deriv.id}>{deriv.title}</a></li>
+      <li><a href={'id/' + deriv.id}>{deriv.title}</a></li>
     {/each}
   </ul>
 
   <h2>Partes</h2>
   <ul>
     {#each node.children as child}
-      <li><a href={'conceptos/' + child.id}>{child.title}</a></li>
+      <li><a href={'id/' + child.id}>{child.title}</a></li>
     {/each}
   </ul>
 {/if}

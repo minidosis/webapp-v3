@@ -3,7 +3,7 @@ const fs = require('fs')
 const { parseAllFiles } = require('./parser')
 const { parse: parseMarkright } = require('../markright')
 
-const GRAPH_DIR = './graph'
+const GRAPH_DIR = '/home/pauek/MiniDosis/graph'
 
 const LinkTypeArray = ['None', 'Base', 'Derived', 'Child', 'Parent', 'Related']
 const listName = {
@@ -18,6 +18,9 @@ class Node {
     this.id = id
     this.links = new Map()
   }
+
+  setFilename(filename) { this.filename = filename }
+
   addLink(type, id) { this.links.set(id, type) }
   addLinks(type, idlist) { idlist.forEach(id => this.addLink(type, id)) }
 
@@ -43,7 +46,7 @@ class Node {
   }
 
   toJson() {
-    const node = { id: this.id, title: this.title, content: this.content };
+    const node = { ...this };
     for (let type in LinkType) {
       node[listName[type]] = [];
     }
@@ -57,13 +60,17 @@ class Node {
 class Graph {
   constructor() {
     this.nodes = new Map();
+    this.read()
   }
 
   has(id) { return this.nodes.has(id); }
 
-  get(id) {
+  get(id, filename) {
     if (!this.nodes.has(id)) {
       this.nodes.set(id, new Node(id))
+    }
+    if (filename) {
+      this.nodes.get(id).setFilename(filename)
     }
     return this.nodes.get(id);
   }
@@ -76,8 +83,8 @@ class Graph {
     return this.nodes.size;
   }
 
-  addNode(id, { title, bases, children, related }, content) {
-    const node = this.get(id);
+  addNode(filename, id, { title, bases, children, related }, content) {
+    const node = this.get(id, filename);
     node.title = title
     node.content = content
 
@@ -98,21 +105,16 @@ class Graph {
   }
 
   read() {
-    parseAllFiles(GRAPH_DIR, (minidosisName, header, contentString) => {
+    parseAllFiles(GRAPH_DIR, (filename, minidosisName, header, contentString) => {
       const content = parseMarkright(contentString)
-      this.addNode(minidosisName, header, content)
+      this.addNode(GRAPH_DIR + '/' + filename, minidosisName, header, content)
     })
   }
 }
 
 const graph = new Graph()
-graph.read()
 
-fs.watch(GRAPH_DIR, (eventType, filename) => {
-  graph.read()
-})
+fs.watch(GRAPH_DIR, () => graph.read())
 
-module.exports = {
-  graph
-}
+module.exports = { graph }
 

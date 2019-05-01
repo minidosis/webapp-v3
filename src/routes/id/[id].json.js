@@ -3,7 +3,9 @@ import { graph } from '../../graph';
 export function get(req, res) {
 	// the `id` parameter is available because
 	// this file is called [id].json.js
-	const { id } = req.params;
+  const { id } = req.params;
+  
+  console.log(req)
 
   if (graph.has(id)) {
 		res.writeHead(200, {
