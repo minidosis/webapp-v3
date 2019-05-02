@@ -36,8 +36,8 @@
     return markright.genHtml(mr, context, {
       minidosis: ({ args, children }) => `<a href="${'id/' + args[0]}">${genHtml(children)}</a>`,
       pre:       ({ args, children }) => {
-        const [lang, _class] = args;
-        return `<div class="pre ${_class}"><pre>${genHtml(children)}</pre></div>`
+        const [lang, _class] = args ? args : [];
+        return `<div class="pre ${_class ? _class : ''}"><pre>${genHtml(children)}</pre></div>`
       },
       code: ({ args, children }) => `<span class="code">${children.join(' ')}</span>`,
       b:  simpleCommand('b'),
@@ -190,9 +190,14 @@
     border-radius: 4px;
     background: rgb(230, 240, 250);
   }
-  :global(div.pre) {
+  :global(div.pre.display), :global(div.pre.center) {
     display: flex;
     justify-content: center;
+    align-items: stretch;    
+  }
+  :global(pre p) { /* TODO: This is UGLY!! */
+    margin: 0;
+    padding: 0;
   }
   :global(.display pre) {
     display: inline-block;

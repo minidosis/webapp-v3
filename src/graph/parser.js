@@ -126,10 +126,14 @@ const parseFile = (dir, file, callback) => {
 }
 
 const parseAllFiles = (dir, callback) => {
-  let minidosis_files = fs.readdirSync(dir).filter(file => file.endsWith('.minidosis'))
-
+  let files = fs.readdirSync(dir, { withFileTypes: true })
+  const minidosis_files = files.filter(f => f.name.endsWith('.minidosis'))
   for (let file of minidosis_files) {
-    parseFile(dir, file, callback)
+    parseFile(dir, file.name, callback)
+  }
+  const directories = files.filter(f => f.isDirectory() && !f.name.startsWith('.'))
+  for (let subdir of directories) {
+    parseAllFiles(dir + '/' + subdir.name, callback)
   }
 }
 

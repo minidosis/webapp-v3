@@ -22,6 +22,8 @@ class Node {
 
   setFilename(filename) { this.filename = filename }
 
+  clearLinks() { this.links = new Map() }
+
   addLink(type, id) { this.links.set(id, type) }
   addLinks(type, idlist) { idlist.forEach(id => this.addLink(type, id)) }
 
@@ -98,6 +100,7 @@ class Graph {
       }
     }
 
+    node.clearLinks()
     add_links(bases, LinkType.Base, LinkType.Derived)
     add_links(children, LinkType.Child, LinkType.Parent)
     add_links(related, LinkType.Related, LinkType.Related)
@@ -138,13 +141,8 @@ const graph = new Graph()
 
 fs.watch(GRAPH_DIR, (event, filename) => {
   try {
-    if (event === 'change') {
-      console.log('reading', filename)
-      graph.readFile(filename)
-    } else {
-      console.log('reading all')
-      graph.readAll()
-    }
+    console.log('re-read graph')
+    graph.readAll()
   } catch (e) {
     console.error("graph.readAll error:", e)
   }
