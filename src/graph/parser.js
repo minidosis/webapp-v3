@@ -110,7 +110,7 @@ const parseTree = (str, pos) => {
   }
   const nprops = Object.keys(tree).length
   if (nprops > 0 && list.length > 0) {
-    error(`A {} is both an object and a list!`)
+    error(`We have both an object (${JSON.stringify(tree)}) and a list (${list})!`)
   }
   return { tree: (nprops > 0 ? tree : list), pos }
 }

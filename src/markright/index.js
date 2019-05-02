@@ -91,10 +91,10 @@ class Parser {
     }
     let delim = this.parseOpenDelimiter();
     if (delim) {
-      let text = this.parse(delim.close)
+      let children = this.parse(delim.close)
       this.expect(delim.close)
-      if (text.length > 0) {
-        result.text = text
+      if (children.length > 0) {
+        result.children = children
       }
     }
     return result
@@ -174,12 +174,15 @@ const parse = (str, commandFuncs) => {
   }
 }
 
-const genHtml = (markright, commandFuncs) => {
+const genHtml = (markright, context, commandFuncs) => {
   // Hasta que no veamos un null, el texto es 'inline'
   // En el momento que vemos un null, entonces pasamos a usar '<p>' 
   let html = '', paragraph = '', lastWasText = false, inline = true;
   for (let node of markright) {
     if (typeof node === 'string') {
+      if (commandFuncs && '<text>' in commandFuncs) {
+        node = commandFunds['<text>']({ node, context })
+      }
       paragraph += (lastWasText ? '\n' : '') + node
     } else if (node == null) {
       inline = false;
@@ -187,7 +190,7 @@ const genHtml = (markright, commandFuncs) => {
       paragraph = ''
     } else if (typeof node === 'object') {
       if (commandFuncs && node.id in commandFuncs) {
-        paragraph += commandFuncs[node.id](node.args, node.text)
+        paragraph += commandFuncs[node.id]({ ...node, context })
       } else {
         paragraph += `<span class="error">Command <b>${node.id}</b> not found</span>`
       }

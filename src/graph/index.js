@@ -63,7 +63,7 @@ class Graph {
     this.readAll()
   }
 
-  has(id)      { return this.nodes.has(id) }
+  has(id) { return this.nodes.has(id) }
   hasImage(id) { return this.images.has(id) }
 
   get(id, filename) {
@@ -116,8 +116,8 @@ class Graph {
 
   updateNode(filename, minidosisName, header, contentString) {
     const content = markright.parse(contentString, {
-      img: ({ args, text: path }) => ({
-        id: 'img', text: [this.getImageHash(path)]
+      img: ({ args, children: path }) => ({
+        id: 'img', children: [this.getImageHash(path[0])]
       })
     })
     this.addNode(GRAPH_DIR + '/' + filename, minidosisName, header, content)
@@ -137,12 +137,16 @@ class Graph {
 const graph = new Graph()
 
 fs.watch(GRAPH_DIR, (event, filename) => {
-  if (event === 'change') {
-    console.log('reading', filename)
-    graph.readFile(filename)
-  } else {
-    console.log('reading all')
-    graph.readAll()
+  try {
+    if (event === 'change') {
+      console.log('reading', filename)
+      graph.readFile(filename)
+    } else {
+      console.log('reading all')
+      graph.readAll()
+    }
+  } catch (e) {
+    console.error("graph.readAll error:", e)
   }
 })
 

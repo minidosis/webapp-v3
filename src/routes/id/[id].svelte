@@ -30,23 +30,21 @@
   }
 
   const simpleCommand = (tag) => 
-    (args, children) => `<${tag}>${children.join(' ')}</${tag}>`
+    ({ args, children }) => `<${tag}>${genHtml(children)}</${tag}>`
 
-  function generateHtml(mr) {
-    return markright.genHtml(mr, {
-      minidosis: (args, children) => `<a href="${'id/' + args[0]}">${generateHtml(children)}</a>`,
-      pre:       (args, children) => {
-        const display = args.find(a => a === 'display');
-        if (display) {
-          return `<div class="display"><pre>${escape(children.join('\n'))}</pre></div>`
-        } else {
-          return `<pre>${escape(children.join('\n'))}</pre>`
-        }
+  function genHtml(mr, context) {
+    return markright.genHtml(mr, context, {
+      minidosis: ({ args, children }) => `<a href="${'id/' + args[0]}">${genHtml(children)}</a>`,
+      pre:       ({ args, children }) => {
+        const [lang, _class] = args;
+        return `<div class="pre ${_class}"><pre>${genHtml(children)}</pre></div>`
       },
-      code:      (args, children) => `<span class="code">${children.join(' ')}</span>`,
+      code: ({ args, children }) => `<span class="code">${children.join(' ')}</span>`,
       b:  simpleCommand('b'),
       h2: simpleCommand('h2'),
-      img: (args, children) => `<img src="asset/${children[0]}" />`,
+      em: simpleCommand('em'),
+      img: ({ args, children }) => `<img src="asset/${children[0]}" />`,
+      box: ({ args, children }) => `<span class="box">${genHtml(children)}</span>`,
     })
   }
 </script>
@@ -90,7 +88,7 @@
 {/if}
 
 <div class="content">
-{@html generateHtml(node.content)}
+{@html genHtml(node.content)}
 </div>
 
 <!--
@@ -111,6 +109,10 @@
   .header h1 {
     margin-bottom: 0;
   }
+  .content {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.3em;
+  }
   .content :global(h2) {
     margin-top: 1.0em;
     font-size: 1.5em;
@@ -118,34 +120,51 @@
   }
   .content :global(a) {
     text-decoration: none;
-    color: rgb(28, 88, 167);
-    border-bottom: 1px solid rgb(199, 216, 231);
+    color: rgb(36, 73, 119);
+    border-bottom: 1px solid rgb(235, 235, 235);
   }
   .content :global(a:hover) {
-    color: black;
+    color: rgb(81, 132, 194);
+    border-bottom: 1px solid rgb(195, 216, 241);
   }
   .content :global(p) {
     margin-bottom: .4em;
   }
   :global(pre) {
-    margin-top: 0;
+    font-size: 0.9em;
+    margin: .15em;
     padding: .3em .6em;
     border: 1px solid rgb(200, 214, 228);
     border-radius: 4px;
     background: rgb(230, 240, 250);
   }
-  :global(.display) {
+  :global(div.pre) {
     display: flex;
     justify-content: center;
   }
   :global(.display pre) {
     display: inline-block;
-    font-size: 130%;
+    color: #707070;
+    font-size: 1.1em;
     background: rgb(240, 247, 199);
     border: 1px solid rgb(226, 224, 189);
   }
+  :global(.center pre) {
+    display: inline-block;
+  }
+  :global(.display pre b) {
+    color: black;
+  }
   :global(span.code) {
     font-family: monospace;
+    font-size: 0.9em;
+  }
+  :global(span.box) {
+    font-family: monospace;
+    background-color: #a0a0a0;
+    color: white;
+    padding: 0 .38em;
+    border-radius: 1em;
   }
   :global(span.error) {
     padding: .3em .5em;
