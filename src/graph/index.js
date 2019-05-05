@@ -4,7 +4,10 @@ const sha1 = require('sha1')
 const { parseFile, parseAllFiles } = require('./parser')
 const markright = require('../markright')
 
-const GRAPH_DIR = '/home/pauek/MiniDosis/graph'
+const GRAPH_DIR = process.env.MINIDOSIS_GRAPH
+if (!GRAPH_DIR) {
+  throw Error('MINIDOSIS_GRAPH directory not defined!')
+}
 
 const LinkTypeArray = ['None', 'Base', 'Derived', 'Child', 'Parent', 'Related']
 const listName = {
