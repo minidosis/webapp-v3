@@ -142,14 +142,26 @@ class Graph {
 
 const graph = new Graph()
 
-fs.watch(GRAPH_DIR, (event, filename) => {
+const rereadGraph = (event, filename) => {
   try {
     console.log('re-read graph')
     graph.readAll()
   } catch (e) {
     console.error("graph.readAll error:", e)
   }
-})
+}
+
+const watchDir = (root) => {
+  let files = fs.readdirSync(root, { withFileTypes: true })
+  const dirs = files.filter(f => f.isDirectory() && !f.name.startsWith('.'))
+  for (let d of dirs) {
+    const subdir = root + '/' + d.name
+    fs.watch(subdir, rereadGraph)
+    watchDir(subdir)
+  }
+}
+
+watchDir(GRAPH_DIR)
 
 module.exports = { graph }
 
