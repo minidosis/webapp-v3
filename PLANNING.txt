@@ -1,4 +1,5 @@
 
+
 - Lo más importante es el grafo. 
   Se necesita una base de datos basada en el grafo.
   
