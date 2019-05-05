@@ -2,7 +2,6 @@
 - Lo más importante es el grafo. 
   Se necesita una base de datos basada en el grafo.
   
-  
 - El grafo está basado en 5 tipos de links: parent-child, base-derived, related.
   Cada nodo tiene relaciones con otros en esas direcciones.
 
