@@ -77,6 +77,10 @@ const tests = [
   {
     input: 'a@{}b',
     output: '["a",{"id":""},"b"]'
+  },
+  {
+    input: '@{a}@{b}',
+    output: '[{"id":"","children":["a"]},{"id":"","children":["b"]}]'
   }
 ]
 
