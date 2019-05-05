@@ -20,11 +20,11 @@ const tests = [
   },
   {
     input: 'abc@d{efg}hij',
-    output: `["abc",{"id":"d","text":["efg"]},"hij"]`
+    output: `["abc",{"id":"d","children":["efg"]},"hij"]`
   },
   {
     input: 'abc@x(y,z){efg}hij',
-    output: `["abc",{"id":"x","args":["y","z"],"text":["efg"]},"hij"]`
+    output: `["abc",{"id":"x","args":["y","z"],"children":["efg"]},"hij"]`
   },
   {
     input: 'abc\n\ndef',
@@ -48,31 +48,35 @@ const tests = [
   },
   {
     input: 'a a a a \nb\n\nd\ne@xxx(1, 2, 3){a\n\nb}\n',
-    output: `["a a a a ","b",null,"d","e",{"id":"xxx","args":["1","2","3"],"text":["a",null,"b"]}]`
+    output: `["a a a a ","b",null,"d","e",{"id":"xxx","args":["1","2","3"],"children":["a",null,"b"]}]`
   },
   {
     input: '@code{int @main()<<< int a = 1; >>>}',
-    output: '[{"id":"code","text":["int ",{"id":"main","text":[" int a = 1; "]}]}]'
+    output: '[{"id":"code","children":["int ",{"id":"main","children":[" int a = 1; "]}]}]'
   },
   {
     input: '@code<<<int main() { int a = 1; }>>>',
-    output: '[{"id":"code","text":["int main() { int a = 1; }"]}]'
+    output: '[{"id":"code","children":["int main() { int a = 1; }"]}]'
   },
   {
     input: '@code<<<@@include <iostream>;\nusing namespace std;\n\nint main() { cout << "hi"; }>>>',
-    output: '[{"id":"code","text":["@include <iostream>;","using namespace std;",null,"int main() { cout << \\"hi\\"; }"]}]'
+    output: '[{"id":"code","children":["@include <iostream>;","using namespace std;",null,"int main() { cout << \\"hi\\"; }"]}]'
   },
   {
     input: 'abc\n@d{e}\n',
-    output: '["abc ",{"id":"d","text":["e"]}]'
+    output: '["abc ",{"id":"d","children":["e"]}]'
   },
   {
     input: 'abc\n\n@d{e}\n',
-    output: '["abc",null,{"id":"d","text":["e"]}]'
+    output: '["abc",null,{"id":"d","children":["e"]}]'
   },
   {
     input: 'abc @d{e}\nfgh',
-    output: '["abc ",{"id":"d","text":["e"]}," fgh"]'
+    output: '["abc ",{"id":"d","children":["e"]}," fgh"]'
+  },
+  {
+    input: 'a@{}b',
+    output: '["a",{"id":""},"b"]'
   }
 ]
 
