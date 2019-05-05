@@ -35,7 +35,7 @@
   function genHtml(mr, context) {
     return markright.genHtml(mr, context, {
       minidosis: ({ args, children }) => `<a href="${'id/' + args[0]}">${genHtml(children)}</a>`,
-      pre:       ({ args, children }) => {
+      pre: ({ args, children }) => {
         const [lang, _class] = args ? args : [];
         return `<div class="pre ${_class ? _class : ''}"><pre>${genHtml(children)}</pre></div>`
       },
@@ -43,8 +43,14 @@
       b:  simpleCommand('b'),
       h2: simpleCommand('h2'),
       em: simpleCommand('em'),
-      img: ({ args, children }) => `<img src="asset/${children[0]}" />`,
-      box: ({ args, children }) => `<span class="box">${genHtml(children)}</span>`,
+      img: ({ children }) => `<img src="asset/${children[0]}" />`,
+      box: ({ children }) => `<span class="box">${genHtml(children)}</span>`,
+      table: simpleCommand('table'),
+      header: ({ children }) => `<thead><tr>${children.map(ch => `<th>${ch.children[0]}</th>`).join('')}</tr></thead>`,
+      row:    ({ children }) => {
+        console.log(children);
+        return `<tr>${children.map(ch => `<td>${ch.children[0]}</td>`).join('')}</tr>`
+      }
     })
   }
 </script>
@@ -132,6 +138,10 @@
   }
   .header h1 {
     margin-bottom: 0;
+  }
+  :global(table) {
+    font-family: sans-serif;
+    font-size: 0.8em;
   }
   nav {
     font-size: .85em;
