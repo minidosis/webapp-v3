@@ -40,7 +40,7 @@
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
       if (child && typeof child === 'object') {
-        html += openCloseCommand(`<div class="item">${itemFn(i)}<div class="content">`, `</div></div>`)(child)
+        html += openCloseCommand(`<div class="item">${itemFn(num)}<div class="content">`, `</div></div>`)(child)
         num++
       }
     }
@@ -61,18 +61,23 @@
       em: simpleCommand('em'),
       img: ({ children }) => `<img src="asset/${children[0]}" />`,
       box: ({ children }) => `<span class="box">${genHtml(children)}</span>`,
-      table: openCloseCommand('<div class="table"><table>', '</table></div>'),
       header: ({ children }) => `<thead><tr>${children.map(ch => `<th>${ch.children[0]}</th>`).join('')}</tr></thead>`,
-      row:    ({ children }) => {
-        return `<tr>${children.map(ch => `<td>${genHtml(ch.children)}</td>`).join('')}</tr>`
-      },
+      row:    ({ children }) => `<tr>${children.map(ch => `<td>${genHtml(ch.children)}</td>`).join('')}</tr>`,
       footnote: ({ args, children }) => {
         const footnum = `<span class="footnote">${args[0]}</span>`
         return (children ? `<div class="footnote">${footnum}${genHtml(children)}</div>`
                          : footnum)
       },
-      enumerate: list('enumerate', 'item', i => `<span class="num">${i}.</span>`),
-      itemize:   list('itemize',   'item', i => `<span class="bullet">&bull;</span>`),
+      olist: list('enumerate', 'item', i => `<span class="num">${i}.</span>`),
+      ulist: list('itemize',   'item', i => `<span class="bullet">&bull;</span>`),
+      table: ({ args, children }) => {
+        let align;
+        if (args && args[0] === 'left') {
+          align = 'left';
+        }
+        return openCloseCommand(`<div class="table"><table ${align ? `style="text-align: ${align}"` : ``}>`, '</table></div>')({ children })
+      },
+      comment: () => '',
     })
   }
 </script>

@@ -103,7 +103,6 @@ class Graph {
       }
     }
 
-    node.clearLinks()
     add_links(bases, LinkType.Base, LinkType.Derived)
     add_links(children, LinkType.Child, LinkType.Parent)
     add_links(related, LinkType.Related, LinkType.Related)
