@@ -1,13 +1,13 @@
 <script context="module">
-			export async function preload({ params, query }) {
-			  const res = await this.fetch(`id/${params.id}.json`);
-			  const data = await res.json();
-			  if (res.status === 200) {
-			    return { node: data };
-			  } else {
-			    this.error(res.status, data.message);
-			  }
-			}
+  export async function preload({ params, query }) {
+    const res = await this.fetch(`id/${params.id}.json`);
+    const data = await res.json();
+    if (res.status === 200) {
+      return { node: data };
+    } else {
+      this.error(res.status, data.message);
+    }
+  }
 </script>
 
 <script>
@@ -29,8 +29,24 @@
     return result;
   }
 
-  const simpleCommand = (tag) => 
-    ({ args, children }) => `<${tag}>${genHtml(children)}</${tag}>`
+  const openCloseCommand = (open, close) => 
+    ({ args, children }) => `${open}${genHtml(children)}${close}`
+
+  const simpleCommand = (tag) => openCloseCommand(`<${tag}>`, `</${tag}>`)
+
+  const list = (cssclass, csssubclass, itemFn) => ({ args, children }) => {
+    let html = `<div class="${cssclass}">`;
+    let num = 1;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i]
+      if (child && typeof child === 'object') {
+        html += openCloseCommand(`<div class="item">${itemFn(i)}`, `</div>`)(child)
+        num++
+      }
+    }
+    html += `</div>`;
+    return html;
+  }
 
   function genHtml(mr, context) {
     return markright.genHtml(mr, context, {
@@ -45,12 +61,18 @@
       em: simpleCommand('em'),
       img: ({ children }) => `<img src="asset/${children[0]}" />`,
       box: ({ children }) => `<span class="box">${genHtml(children)}</span>`,
-      table: simpleCommand('table'),
+      table: openCloseCommand('<div class="table"><table>', '</table></div>'),
       header: ({ children }) => `<thead><tr>${children.map(ch => `<th>${ch.children[0]}</th>`).join('')}</tr></thead>`,
       row:    ({ children }) => {
-        console.log(children);
         return `<tr>${children.map(ch => `<td>${ch.children[0]}</td>`).join('')}</tr>`
-      }
+      },
+      footnote: ({ args, children }) => {
+        const footnum = `<span class="footnote">${args[0]}</span>`
+        return (children ? `<div class="footnote">${footnum}${genHtml(children)}</div>`
+                         : footnum)
+      },
+      enumerate: list('enumerate', 'item', i => `<span class="num">${i}.</span>`),
+      itemize:   list('itemize',   'item', i => `<span class="bullet"></span>`),
     })
   }
 </script>
@@ -139,9 +161,24 @@
   .header h1 {
     margin-bottom: 0;
   }
+  :global(div.table) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   :global(table) {
+    text-align: center;
+    border-collapse: collapse;
     font-family: sans-serif;
     font-size: 0.8em;
+    border: 1px solid gray;
+  }
+  :global(table td), :global(table th) {
+    border: 1px solid gray;
+    padding: .2em .6em;
+  }
+  :global(table th) {
+    background-color: #e0e0e0;
   }
   nav {
     font-size: .85em;
@@ -192,8 +229,35 @@
   .text :global(p) {
     margin-bottom: 0.4em;
   }
+  :global(.enumerate .item), :global(.itemize .item) {
+    padding-left: 1.2em;
+    padding-bottom: .5em;
+  }
+  :global(.enumerate .num) {
+    font-size: .9em;
+    margin-right: 0.6em;
+    border: 1px solid #c0c0c0;
+    padding: .05em .25em;
+    border-radius: 1em;
+  }
+
+  :global(.footnote) {
+    font-size: 0.75em;
+  }
+  :global(span.footnote) {    
+    font-size: 0.6em;
+    vertical-align: super;
+    margin-left: .1em;
+  }
+  :global(div.footnote) {
+    font-size: 0.75em;
+    color: #808080;
+  }
+  :global(div.footnote span.footnote) {
+    margin-right: .3em;
+  }
   :global(pre) {
-    font-size: 0.9em;
+    font-size: 0.8em;
     margin: 0.15em;
     padding: 0.3em 0.6em;
     border: 1px solid rgb(200, 214, 228);
@@ -212,7 +276,7 @@
   :global(.display pre) {
     display: inline-block;
     color: #707070;
-    font-size: 1.1em;
+    font-size: 1em;
     background: rgb(240, 247, 199);
     border: 1px solid rgb(226, 224, 189);
   }
