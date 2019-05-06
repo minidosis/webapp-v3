@@ -40,7 +40,7 @@
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
       if (child && typeof child === 'object') {
-        html += openCloseCommand(`<div class="item">${itemFn(i)}`, `</div>`)(child)
+        html += openCloseCommand(`<div class="item">${itemFn(i)}<div class="content">`, `</div></div>`)(child)
         num++
       }
     }
@@ -64,7 +64,7 @@
       table: openCloseCommand('<div class="table"><table>', '</table></div>'),
       header: ({ children }) => `<thead><tr>${children.map(ch => `<th>${ch.children[0]}</th>`).join('')}</tr></thead>`,
       row:    ({ children }) => {
-        return `<tr>${children.map(ch => `<td>${ch.children[0]}</td>`).join('')}</tr>`
+        return `<tr>${children.map(ch => `<td>${genHtml(ch.children)}</td>`).join('')}</tr>`
       },
       footnote: ({ args, children }) => {
         const footnum = `<span class="footnote">${args[0]}</span>`
@@ -72,7 +72,7 @@
                          : footnum)
       },
       enumerate: list('enumerate', 'item', i => `<span class="num">${i}.</span>`),
-      itemize:   list('itemize',   'item', i => `<span class="bullet"></span>`),
+      itemize:   list('itemize',   'item', i => `<span class="bullet">&bull;</span>`),
     })
   }
 </script>
@@ -230,8 +230,11 @@
     margin-bottom: 0.4em;
   }
   :global(.enumerate .item), :global(.itemize .item) {
-    padding-left: 1.2em;
+    padding-left: 0.5em;
     padding-bottom: .5em;
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
   }
   :global(.enumerate .num) {
     font-size: .9em;
@@ -240,7 +243,10 @@
     padding: .05em .25em;
     border-radius: 1em;
   }
-
+  :global(.itemize .bullet) {
+    margin-right: .5em;
+    font-size: 1em;
+  }
   :global(.footnote) {
     font-size: 0.75em;
   }
