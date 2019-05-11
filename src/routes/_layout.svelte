@@ -6,6 +6,8 @@
 
 <style>
 	main {
+    display: flex;
+    justify-content: center;
 		position: relative;
 		padding: 1em;
 		margin: 0 0;

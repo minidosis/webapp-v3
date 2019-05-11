@@ -12,12 +12,12 @@
 
 <script>
   import markright from "@minidosis/markright";
-  export let node;
-  let expanded = false;
+  import GraphLinks from "../../components/GraphLinks.svelte";
+  import { afterUpdate } from "svelte";
 
-  const toggleExpanded = () => {
-    expanded = !expanded;
-  };
+  export let node;
+
+  let linksExpanded = false;
 
   function escape(str) {
     let result = "";
@@ -35,6 +35,16 @@
     }
     return result;
   }
+
+  afterUpdate(() => {
+    console.log("update", node.id);
+    linksExpanded = false;
+  });
+
+  const unexpandLinks = () => {
+    linksExpanded = false;
+    console.log("unexpand!");
+  };
 
   const openCloseCommand = (open, close) => ({ args, children }) =>
     `${open}${genHtml(children)}${close}`;
@@ -105,11 +115,14 @@
     comment: () => ""
   };
 
-  const genHtml = (mr, context) => markright.genHtml(mr, context, generatorFunctions)
+  const genHtml = (mr, context) =>
+    markright.genHtml(mr, context, generatorFunctions);
 
   const genText = (mr, context) => {
     // Search for the @text node for now...
-    const text = mr.filter(node => node && typeof node === 'object' && node.id === 'text');
+    const text = mr.filter(
+      node => node && typeof node === "object" && node.id === "text"
+    );
     if (text.length > 1) {
       return `<span class="error">Node has too many text nodes!</span>`;
     } else if (text.length == 0) {
@@ -117,16 +130,19 @@
     } else {
       return markright.genHtml(text[0].children, context, generatorFunctions);
     }
-  }
+  };
 </script>
 
 <style>
   .content {
+    position: relative;
+    width: 45em;
     background-color: white;
     border-radius: 0.4em;
+    padding: 2em;
   }
+
   .header {
-    cursor: pointer;
     margin-bottom: 1em;
     padding: 1.5em;
     padding-bottom: 1em;
@@ -134,9 +150,6 @@
     border-top-left-radius: 0.4em;
     border-top-right-radius: 0.4em;
     border-bottom: 1px solid rgb(248, 247, 246);
-  }
-  .header:hover {
-    background-color: rgb(255, 251, 242);
   }
   .header h1 {
     margin-bottom: 0;
@@ -176,17 +189,6 @@
     font-size: 0.95em;
     margin-right: 1em;
     color: rgb(121, 67, 32);
-  }
-  nav section a {
-    margin-left: 0.5em;
-    text-decoration: none;
-    background-color: rgb(219, 99, 0);
-    padding: 0em 0.6em;
-    border-radius: 1em;
-    color: white;
-  }
-  nav section a:hover {
-    background-color: rgb(241, 125, 30);
   }
   .text {
     padding: 0 1.3em 1.1em 1.3em;
@@ -306,47 +308,12 @@
 </svelte:head>
 
 <div class="content">
-  <div class="header {expanded ? 'open' : ''}" on:click={toggleExpanded}>
+  <GraphLinks direction="up" links={node.parents} />
+  <GraphLinks direction="down" links={node.children} />
+  <GraphLinks direction="left" links={node.bases} />
+  <GraphLinks direction="right" links={node.derived} />
+  <div class="header">
     <h1>{node.title}</h1>
-    {#if expanded}
-      <nav>
-        {#if node.parents.length > 0}
-          <section>
-            <h3>Parte de</h3>
-            {#each node.parents as parent}
-              <a href={'id/' + parent.id}>{parent.title}</a>
-            {/each}
-          </section>
-        {/if}
-
-        {#if node.bases.length > 0}
-          <section>
-            <h3>Más general</h3>
-            {#each node.bases as base}
-              <a href={'id/' + base.id}>{base.title}</a>
-            {/each}
-          </section>
-        {/if}
-
-        {#if node.derived.length > 0}
-          <section>
-            <h3>Derivados</h3>
-            {#each node.derived as deriv}
-              <a href={'id/' + deriv.id}>{deriv.title}</a>
-            {/each}
-          </section>
-        {/if}
-
-        {#if node.children.length > 0}
-          <section>
-            <h3>Incluye</h3>
-            {#each node.children as child}
-              <a href={'id/' + child.id}>{child.title}</a>
-            {/each}
-          </section>
-        {/if}
-      </nav>
-    {/if}
   </div>
   <div class="text">
     {@html genText(node.content)}
