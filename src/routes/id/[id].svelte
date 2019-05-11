@@ -103,10 +103,10 @@
     comment: () => ""
   };
 
-  const genHtml = (mr, context) =>
-    markright.genHtml(mr, context, generatorFunctions);
+  const genHtml = (mr) =>
+    markright.genHtml(mr, generatorFunctions);
 
-  const genText = (mr, context) => {
+  const genText = (mr) => {
     // Search for the @text node for now...
     const text = mr.filter(
       node => node && typeof node === "object" && node.id === "text"
@@ -116,7 +116,7 @@
     } else if (text.length == 0) {
       return `<span class="error">Node has 0 text nodes!</span>`;
     } else {
-      return markright.genHtml(text[0].children, context, generatorFunctions);
+      return markright.genHtml(text[0].children, generatorFunctions);
     }
   };
 </script>
