@@ -352,15 +352,3 @@
     {@html genText(node.content)}
   </div>
 </div>
-
-<!--
-
-<pre>
-{JSON.stringify(node.content, null, 3)}
-</pre>
-
-<pre>
-{generateHtml(node.content)}
-</pre>
-
--->
