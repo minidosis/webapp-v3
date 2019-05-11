@@ -1,4 +1,4 @@
-import { graph } from '../../graph';
+import { graph } from '@minidosis/graph';
 
 export function get(req, res) {
   const nodes = [];

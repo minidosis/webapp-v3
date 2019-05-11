@@ -11,7 +11,7 @@
 </script>
 
 <script>
-  import markright from "../../markright";
+  import markright from "@minidosis/markright";
   export let node;
   let expanded = false;
 
