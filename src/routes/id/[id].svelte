@@ -17,8 +17,6 @@
 
   export let node;
 
-  let linksExpanded = false;
-
   function escape(str) {
     let result = "";
     for (let i = 0; i < str.length; i++) {
@@ -35,16 +33,6 @@
     }
     return result;
   }
-
-  afterUpdate(() => {
-    console.log("update", node.id);
-    linksExpanded = false;
-  });
-
-  const unexpandLinks = () => {
-    linksExpanded = false;
-    console.log("unexpand!");
-  };
 
   const openCloseCommand = (open, close) => ({ args, children }) =>
     `${open}${genHtml(children)}${close}`;
@@ -174,22 +162,7 @@
   :global(table th) {
     background-color: #e0e0e0;
   }
-  nav {
-    font-size: 0.85em;
-    margin-top: 1em;
-  }
-  nav section {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: baseline;
-  }
-  nav section h3 {
-    font-weight: 700;
-    font-size: 0.95em;
-    margin-right: 1em;
-    color: rgb(121, 67, 32);
-  }
+
   .text {
     padding: 0 1.3em 1.1em 1.3em;
     font-family: "EB Garamond", serif;
