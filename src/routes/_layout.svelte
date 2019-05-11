@@ -7,7 +7,6 @@
 <style>
 	main {
 		position: relative;
-		max-width: 45em;
 		padding: 1em;
 		margin: 0 0;
 		box-sizing: border-box;

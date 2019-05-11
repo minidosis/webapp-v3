@@ -25,4 +25,9 @@
   ul {
     list-style: none;
   }
+  li {
+    font-size: 11pt;
+    display: inline-block;
+    width: 23%;
+  }
 </style>
