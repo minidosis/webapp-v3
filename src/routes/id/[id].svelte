@@ -11,102 +11,12 @@
 </script>
 
 <script>
-  import markright from "@minidosis/markright";
+  import { genHtml } from "../../genhtml";
   import GraphLinks from "../../components/GraphLinks.svelte";
-  import { afterUpdate } from "svelte";
 
   export let node;
 
-  function escape(str) {
-    let result = "";
-    for (let i = 0; i < str.length; i++) {
-      switch (str[i]) {
-        case "<":
-          result += "&lt;";
-          break;
-        case ">":
-          result += "&gt;";
-          break;
-        default:
-          result += str[i];
-      }
-    }
-    return result;
-  }
-
-  const openCloseCommand = (open, close) => ({ args, children }) =>
-    `${open}${genHtml(children)}${close}`;
-
-  const simpleCommand = tag => openCloseCommand(`<${tag}>`, `</${tag}>`);
-
-  const list = (cssclass, csssubclass, itemFn) => ({ args, children }) => {
-    let html = `<div class="${cssclass}">`;
-    let num = 1;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child && typeof child === "object") {
-        html += openCloseCommand(
-          `<div class="item">${itemFn(num)}<div class="content">`,
-          `</div></div>`
-        )(child);
-        num++;
-      }
-    }
-    html += `</div>`;
-    return html;
-  };
-
-  const generatorFunctions = {
-    minidosis: ({ args, children }) =>
-      `<a href="${"id/" + args[0]}">${genHtml(children)}</a>`,
-    pre: ({ args, children }) => {
-      const [lang, _class] = args ? args : [];
-      return `<div class="pre ${_class ? _class : ""}"><pre>${genHtml(
-        children
-      )}</pre></div>`;
-    },
-    code: ({ args, children }) =>
-      `<span class="code">${children.join(" ")}</span>`,
-    b: simpleCommand("b"),
-    h2: simpleCommand("h2"),
-    em: simpleCommand("em"),
-    img: ({ children }) => `<img src="asset/${children[0]}" />`,
-    box: ({ children }) => `<span class="box">${genHtml(children)}</span>`,
-    header: ({ children }) =>
-      `<thead><tr>${children
-        .map(ch => `<th>${ch.children[0]}</th>`)
-        .join("")}</tr></thead>`,
-    row: ({ children }) =>
-      `<tr>${children
-        .map(ch => `<td>${genHtml(ch.children)}</td>`)
-        .join("")}</tr>`,
-    footnote: ({ args, children }) => {
-      const footnum = `<span class="footnote">${args[0]}</span>`;
-      return children
-        ? `<div class="footnote">${footnum}${genHtml(children)}</div>`
-        : footnum;
-    },
-    olist: list("enumerate", "item", i => `<span class="num">${i}.</span>`),
-    ulist: list("itemize", "item", i => `<span class="bullet">&bull;</span>`),
-    table: ({ args, children }) => {
-      let align;
-      if (args && args[0] === "left") {
-        align = "left";
-      }
-      return openCloseCommand(
-        `<div class="table"><table ${
-          align ? `style="text-align: ${align}"` : ``
-        }>`,
-        "</table></div>"
-      )({ children });
-    },
-    comment: () => ""
-  };
-
-  const genHtml = (mr) =>
-    markright.genHtml(mr, generatorFunctions);
-
-  const genText = (mr) => {
+  const genText = mr => {
     // Search for the @text node for now...
     const text = mr.filter(
       node => node && typeof node === "object" && node.id === "text"
@@ -116,7 +26,7 @@
     } else if (text.length == 0) {
       return `<span class="error">Node has 0 text nodes!</span>`;
     } else {
-      return markright.genHtml(text[0].children, generatorFunctions);
+      return genHtml(text[0].children);
     }
   };
 </script>
@@ -143,6 +53,7 @@
     margin-bottom: 0;
   }
   :global(div.table) {
+    padding: 1em 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,9 +96,12 @@
   .text :global(p) {
     margin-bottom: 0.4em;
   }
+  :global(.enumerate), :global(.itemize) {
+    padding-left: 0.8em;
+  }
   :global(.enumerate .item),
   :global(.itemize .item) {
-    padding-left: 0.5em;
+    padding-left: 0.5em 0.5em;
     padding-bottom: 0.5em;
     display: flex;
     justify-content: flex-start;
@@ -205,6 +119,7 @@
     font-size: 1em;
   }
   :global(.footnote) {
+    margin-top: 2em;
     font-size: 0.75em;
   }
   :global(span.footnote) {
@@ -240,8 +155,8 @@
   }
   :global(.display pre) {
     display: inline-block;
-    color: #707070;
-    font-size: 1em;
+    color: black;
+    font-size: 1.1em;
     background: rgb(240, 247, 199);
     border: 1px solid rgb(226, 224, 189);
   }
