@@ -27,11 +27,15 @@ class HtmlGenerator extends markright.Generator {
     }
   }
 
-  finishParagraph(paragraph) {
+  __paragraph__(paragraph) {
+    return paragraph.join('')
+  }
+
+  __doc__(doc) {
     if (this.in('pre')) {
-      return paragraph + '\n'
+      return doc.join('\n')
     } else {
-      return `<p>${paragraph}</p>\n`
+      return doc.map(p => `<p>${p}</p>`).join('\n')
     }
   }
 
