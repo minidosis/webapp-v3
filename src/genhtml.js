@@ -20,7 +20,7 @@ class HtmlGenerator extends markright.Generator {
   }
 
   __text__(text) {
-    if (this.in('pre')) {
+    if (this.in('pre') || this.in('code')) {
       this.add(escape(text))
     } else {
       this.add(text)
@@ -43,6 +43,10 @@ class HtmlGenerator extends markright.Generator {
     this.add(`<a href="${"id/" + args[0]}">${this.generate(children)}</a>`)
   }
 
+  a({ args, children }) {
+    this.add(`<a href="${args[0]}">${this.generate(children)}</a>`)
+  }
+
   b({ children }) {
     this.add(`<b>${this.generate(children)}</b>`)
   }
@@ -63,7 +67,7 @@ class HtmlGenerator extends markright.Generator {
       if (child && typeof child === "object") {
         html += `<div class="item">
           <span class="num">${num}</span>
-          <div class="content">${this.generate(child)}</div>
+          <div class="content">${this.generate(child.children)}</div>
         </div>`
         num++;
       }
@@ -77,7 +81,7 @@ class HtmlGenerator extends markright.Generator {
     let num = 1;
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      if (child && typeof child === "object") {
+      if (child && typeof child === "object" && child.id == "") {
         html += `<div class="item">
           <span class="bullet">&bull;</span>
           <div class="content">${this.generate(child.children)}</div>
@@ -95,7 +99,7 @@ class HtmlGenerator extends markright.Generator {
   }
 
   code({ args, children }) {
-    this.add(`<span class="code">${children.join(" ")}</span>`)
+    this.add(`<span class="code">${this.generate(children)}</span>`)
   }
 
   img({ children }) {
