@@ -12,6 +12,8 @@
     "test": "run-p --race dev cy:run"
   },
   "dependencies": {
+    "@minidosis/graph": "file:../graph",
+    "@minidosis/markright": "file:../markright",
     "@react-pdf/renderer": "^1.5.4",
     "compression": "^1.7.1",
     "polka": "^0.5.0",
