@@ -135,7 +135,7 @@
     margin-right: 0.3em;
   }
   :global(pre) {
-    font-size: 0.8em;
+    font-size: 0.85em;
     margin: 0.15em;
     padding: 0.3em 0.6em;
     border: 1px solid rgb(200, 214, 228);
@@ -151,11 +151,6 @@
   :global(div.pre.display) {
     padding-top: 0.8em;
     padding-bottom: 0.8em;
-  }
-  :global(pre p) {
-    /* TODO: This is UGLY!! */
-    margin: 0;
-    padding: 0;
   }
   :global(.display pre) {
     display: inline-block;
@@ -175,7 +170,7 @@
   }
   :global(span.code) {
     font-family: monospace;
-    font-size: 0.9em;
+    font-size: 0.8em;
   }
   :global(span.box) {
     font-size: 0.9em;
