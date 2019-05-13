@@ -148,6 +148,10 @@
     justify-content: center;
     align-items: stretch;
   }
+  :global(div.pre.display) {
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+  }
   :global(pre p) {
     /* TODO: This is UGLY!! */
     margin: 0;
