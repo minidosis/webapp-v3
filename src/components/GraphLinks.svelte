@@ -60,6 +60,7 @@
   }
   .parent:hover .links {
     display: flex;
+    flex-wrap: wrap;
     padding: 0.3em;
   }
   .parent:hover .arrow {
