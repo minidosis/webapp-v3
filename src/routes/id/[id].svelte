@@ -16,34 +16,32 @@
 
   export let node;
 
+  const isTextNode = node => node && typeof node === "object" && node.id === "text"
+
   const genText = mr => {
     // Search for the @text node for now...
-    const text = mr.filter(
-      node => node && typeof node === "object" && node.id === "text"
-    );
-    if (text.length > 1) {
-      return `<span class="error">Node has too many text nodes!</span>`;
-    } else if (text.length == 0) {
-      return `<span class="error">Node has 0 text nodes!</span>`;
-    } else {
-      return genHtml(text[0].children);
+    if (!Array.isArray(mr)) {
+      return `<span class="error">Markright is not an array</span>`
     }
+    const text = mr.filter(isTextNode)
+    if (text.length !== 1) {
+      return `<span class="error">Node has ${text.length} text nodes!</span>`;
+    }
+    return genHtml(text[0].children);
   };
 </script>
 
 <style>
   .content {
     position: relative;
-    max-width: 45em;
+    width: 45em;
     background-color: white;
     border-radius: 0.4em;
     padding: 1.4em;
   }
 
-  @media (min-width: 1200px) {
-  	.content {
-		  width: 45em;
-	  }
+  @media (max-width: 800px) {
+  	.content { width: 90%; }
   }
 
   .header {
