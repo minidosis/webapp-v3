@@ -40,6 +40,12 @@
     padding: 1.4em;
   }
 
+  @media (min-width: 1200px) {
+  	.content {
+		  width: 45em;
+	  }
+  }
+
   .header {
     margin-bottom: 1em;
     padding: 1.5em;
