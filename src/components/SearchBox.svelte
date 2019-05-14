@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   import * as sapper from '@sapper/app'
 
+  let inputRef;
   let query = '';
 
   const dispatch = createEventDispatcher()
@@ -9,6 +10,13 @@
   const search = () => {
     dispatch('search', { query })
     query = ''
+  }
+
+  const onKeyDown = (e) => {
+    if (e.key === '/') {
+      e.preventDefault();
+      inputRef.focus()
+    }
   }
 </script>
 
@@ -37,7 +45,9 @@
   }
 </style>
 
+<svelte:window on:keydown={onKeyDown} />
+
 <form class="search" on:submit|preventDefault={search}>
   <img src="search.svg" alt="search" />
-  <input bind:value={query} />
+  <input bind:this={inputRef} bind:value={query} />
 </form>

@@ -34,10 +34,10 @@
 <style>
   .content {
     position: relative;
-    width: 45em;
+    max-width: 45em;
     background-color: white;
     border-radius: 0.4em;
-    padding: 2em;
+    padding: 1.4em;
   }
 
   .header {

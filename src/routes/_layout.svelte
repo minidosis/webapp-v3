@@ -22,8 +22,20 @@
     } catch (e) {
       results = `error: ${e}`;
     }
-  };
+  }
+
+  const handleKeydown = (event) => {
+    if (event.key === 'Escape') {
+      showResults = false
+    } else if (event.key === '/' && event.shiftKey) {
+      console.log('Search!!')
+    } else {
+      console.log(event)
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <style>
   main {
@@ -43,6 +55,6 @@
 <main>
   <slot />
   {#if showResults}
-    <SearchResults {results} on:clicksearch={() => (showResults = false)} />
+    <SearchResults {results} on:hideresults={() => (showResults = false)} />
   {/if}
 </main>
