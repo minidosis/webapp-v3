@@ -8,8 +8,10 @@
   const dispatch = createEventDispatcher()
 
   const search = () => {
-    dispatch('search', { query })
-    query = ''
+    if (query) {
+      dispatch('search', { query })
+      query = ''
+    }
   }
 
   const onKeyDown = (e) => {
