@@ -1,4 +1,6 @@
 <script>
+  import SearchBox from './SearchBox.svelte'
+
 	export let segment;
 </script>
 
@@ -8,6 +10,8 @@
 		font-weight: 300;
     padding: 0 1em;
     background-color: white;
+    display: flex;
+    align-items: center;
 	}
 
 	ul {
@@ -47,6 +51,11 @@
 		padding: 1em 0.5em;
 		display: block;
 	}
+
+  ul {
+    margin-right: 2em;
+  }
+  
 </style>
 
 <nav>
@@ -55,4 +64,6 @@
 		<li><a class='{segment === "about" ? "selected" : ""}' href='about'>about</a></li>
     <li><a rel=prefetch class='{segment === "id" ? "selected" : ""}' href='id'>conceptos</a></li>
 	</ul>
+
+  <SearchBox on:search />
 </nav>
