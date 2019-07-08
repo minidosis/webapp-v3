@@ -8,16 +8,16 @@
 	%sapper.base%
 
 	<link rel='stylesheet' href='global.css'>
+  <link rel="stylesheet" href='prism.css' />
 	<link rel='manifest' href='manifest.json'>
-	<link rel='icon' type='image/png' href='favicon.png'>
+  <link rel='icon' type='image/png' href='favicon.png'>
+
+
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
-  <!-- <link href="https://fonts.googleapis.com/css?family=Source+Serif+Pro" rel="stylesheet"> -->
-  <!-- <link href="https://fonts.googleapis.com/css?family=Neuton" rel="stylesheet"> -->
-  <!-- <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet"> -->
 
-	<!-- Sapper generates a <style> tag containing critical CSS
+  <!-- Sapper generates a <style> tag containing critical CSS
 	     for the current page. CSS for the rest of the app is
 	     lazily loaded when it precaches secondary pages -->
 	%sapper.styles%
@@ -34,6 +34,7 @@
 	<!-- Sapper creates a <script> tag containing `app/client.js`
 	     and anything else it needs to hydrate the app and
 	     initialise the router -->
-	%sapper.scripts%
+  %sapper.scripts%
+  <script src="prism.js"></script>
 </body>
 </html>

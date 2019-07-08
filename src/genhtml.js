@@ -95,7 +95,9 @@ class HtmlGenerator extends markright.Generator {
 
   pre({ args, children }) {
     const [lang, _class] = args ? args : [];
-    this.add(`<div class="pre ${_class ? _class : ""}"><pre>${this.generate(children)}</pre></div>`)
+    this.add(`<div class="pre ${_class ? _class : ""}">
+      <pre><code class="language-${lang}">${this.generate(children)}</code></pre>
+    </div>`)
   }
 
   code({ args, children }) {
