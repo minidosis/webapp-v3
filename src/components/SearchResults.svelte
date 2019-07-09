@@ -1,5 +1,4 @@
 <script>
-  import * as sapper from '@sapper/app'
   import { createEventDispatcher } from 'svelte'
 
   export let results = [];

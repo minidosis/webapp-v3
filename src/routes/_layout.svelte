@@ -1,5 +1,4 @@
 <script>
-  import * as sapper from "@sapper/app";
   import Nav from "../components/Nav.svelte";
   import { beforeUpdate } from "svelte";
   import SearchResults from "../components/SearchResults.svelte";

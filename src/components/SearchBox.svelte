@@ -1,6 +1,5 @@
 <script>
   import { createEventDispatcher } from 'svelte'
-  import * as sapper from '@sapper/app'
 
   let inputRef;
   let query = '';
