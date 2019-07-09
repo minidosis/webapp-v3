@@ -8,8 +8,9 @@ export function get(req, res) {
   if (graph.has(id)) {
 		res.writeHead(200, {
 			'Content-Type': 'application/json'
-    });
-		res.end(graph.get(id).toJson());
+		});
+		const node = graph.get(id)
+		res.end(node.toJson());
   } 
   else {
 		res.writeHead(404, {
