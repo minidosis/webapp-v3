@@ -60,8 +60,8 @@ class HtmlGenerator extends markright.Generator {
   }
 
   olist({ args, children }) {
-    let html = `<div class="enumerate">`;
-    let num = 1;
+    let html = `<div class="enumerate">`
+    let num = 1
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       if (child && typeof child === "object") {
@@ -69,28 +69,28 @@ class HtmlGenerator extends markright.Generator {
           <span class="num">${num}</span>
           <div class="content">${this.generate(child.children)}</div>
         </div>`
-        num++;
+        num++
       }
     }
-    html += `</div>`;
-    this.add(html);
+    html += `</div>`
+    this.add(html)
   }
 
   ulist({ args, children }) {
-    let html = `<div class="itemize">`;
+    let html = `<div class="itemize">`
     let num = 1;
     for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child && typeof child === "object" && child.id == "") {
+      const child = children[i]
+      if (child && typeof child === "object" && child.id == "row") {
         html += `<div class="item">
           <span class="bullet">&bull;</span>
           <div class="content">${this.generate(child.children)}</div>
         </div>`
-        num++;
+        num++
       }
     }
-    html += `</div>`;
-    this.add(html);
+    html += `</div>`
+    this.add(html)
   }
 
   pre({ args, children }) {
@@ -123,7 +123,7 @@ class HtmlGenerator extends markright.Generator {
   }
 
   footnote({ args, children }) {
-    const footnum = `<span class="footnote">${args[0]}</span>`;
+    const footnum = `<span class="footnote">${args[0]}</span>`
     this.add(children
       ? `<div class="footnote">${footnum}${this.generate(children)}</div>`
       : footnum)
@@ -133,7 +133,7 @@ class HtmlGenerator extends markright.Generator {
   table({ args, children }) {
     let align;
     if (args && args[0] === "left") {
-      align = "left";
+      align = "left"
     }
     this.add(`<div class="table">
       <table ${align ? `style="text-align: ${align}"` : ``}>
