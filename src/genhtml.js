@@ -1,5 +1,5 @@
 
-const markright = require('@minidosis/markright')
+const { parse } = require('@minidosis/markright')
 
 const escape = (text) => {
   let result = ''
@@ -7,148 +7,131 @@ const escape = (text) => {
     switch (text[i]) {
       case '<': result += '&lt;'; break;
       case '>': result += '&gt;'; break;
-      default:  result += text[i]; break;
+      default: result += text[i]; break;
     }
   }
   return result
 }
 
-class HtmlGenerator extends markright.Generator {
+class HtmlFuncMap {
 
-  __command__(node) {
-    this.add(`<span class="error">Cmd <code>"${node.id}"</code> not found</span>`)
-  }
+  minidosis(args, children) { return `<a href="${"id/" + args[0]}">${parse(children, this)}</a>` }
+  a(args, children) { return `<a href="${args[0]}">${parse(children, this)}</a>` }
+  b(_, children) { return `<b>${parse(children, this)}</b>` }
+  em(_, children) { return `<em>${parse(children, this)}</em>` }
+  h2(_, children) { return `<h2>${parse(children, this)}</h2>` }
 
-  __text__(text) {
-    if (this.in('pre') || this.in('code')) {
-      this.add(escape(text))
-    } else {
-      this.add(text)
-    }
-  }
-
-  __paragraph__(paragraph) {
-    return paragraph.join('')
-  }
-
-  __doc__(doc) {
-    if (this.in('pre')) {
-      return doc.join('\n')
-    } else {
-      return doc.map(p => `<p>${p}</p>`).join('\n')
-    }
-  }
-
-  minidosis({ args, children }) {
-    this.add(`<a href="${"id/" + args[0]}">${this.generate(children)}</a>`)
-  }
-
-  a({ args, children }) {
-    this.add(`<a href="${args[0]}">${this.generate(children)}</a>`)
-  }
-
-  b({ children }) {
-    this.add(`<b>${this.generate(children)}</b>`)
-  }
-
-  em({ children }) {
-    this.add(`<em>${this.generate(children)}</em>`)
-  }
-
-  h2({ children }) {
-    this.add(`<h2>${this.generate(children)}</h2>`)
-  }
-
-  olist({ args, children }) {
+  olist(_, children) {
     let html = `<div class="enumerate">`
+    let funcMap = this
     let num = 1
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child && typeof child === "object") {
-        html += `<div class="item">
-          <span class="num">${num}</span>
-          <div class="content">${this.generate(child.children)}</div>
-        </div>`
+    parse(children, {
+      row(_, children) {
+        html += `<div class="item"><span class="num">${num}</span>`
+        html += `<div class="content">`
+        html += parse(children, funcMap)
+        html += `</div></div>`
         num++
-      }
-    }
+      },
+    })
     html += `</div>`
-    this.add(html)
+    console.log(html)
+    return html
   }
 
-  ulist({ args, children }) {
+  ulist(_, children) {
     let html = `<div class="itemize">`
-    let num = 1;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i]
-      if (child && typeof child === "object" && child.id == "row") {
-        html += `<div class="item">
-          <span class="bullet">&bull;</span>
-          <div class="content">${this.generate(child.children)}</div>
-        </div>`
-        num++
-      }
-    }
+    let funcMap = this
+    parse(children, {
+      row(_, children) {
+        html += `<div class="item"><span class="bullet">&bull;</span>`
+        html += `<div class="content">`
+        html += parse(children, funcMap)
+        html += `</div></div>`
+      },
+    })
     html += `</div>`
-    this.add(html)
+    return html
   }
 
-  pre({ args, children }) {
+  pre(args, children) {
     const [lang, _class] = args ? args : [];
-    this.add(`<div class="pre ${_class ? _class : ""}">
-      <pre><code class="language-${lang}">${this.generate(children)}</code></pre>
-    </div>`)
+    let html = ''
+    html += `<div class="pre ${_class ? _class : ""}">`
+    html += `<pre><code class="language-${lang}">`
+    html += parse(children, {
+      b: this.b,
+      box: this.box,
+      __block__(children) { return children ? children.join('\n') : '' },
+      __line__(children) { return children ? children.join('') : '' },
+      __text__(text) { return escape(text) },
+    })
+    html += `</code></pre></div>`
+    return html
   }
 
-  code({ args, children }) {
-    this.add(`<span class="code">${this.generate(children)}</span>`)
+  code(_, children) {
+    return `<span class="code">${escape(parse(children, this))}</span>`
   }
 
-  img({ children }) {
-    this.add(`<img src="asset/${children[0]}" />`)
+  img(_, children) { return `<img src="asset/${children[0]}" />` }
+
+  box(_, children) {
+    return `<span class="box">${parse(children, this)}</span>`
   }
 
-  box({ children }) {
-    this.add(`<span class="box">${this.generate(children)}</span>`)
+  header(_, children) {
+    let html = `<thead><tr>`
+    console.log("header", children)
+    children.forEach(ch => {
+      html += `<th>${ch.children[0]}</th>`
+    })
+    html += `</tr></thead>`
+    return html
   }
 
-  header({ children }) {
-    this.add(`<thead><tr>${
-      children.map(ch => `<th>${ch.children[0]}</th>`).join("")
-    }</tr></thead>`)
-  }
-
-  row({ children }) {
-    this.add(`<tr>${children.map(ch => `<td>${this.generate(ch.children)}</td>`).join("")}</tr>`)
-  }
-
-  footnote({ args, children }) {
+  footnote(args, children) {
     const footnum = `<span class="footnote">${args[0]}</span>`
-    this.add(children
-      ? `<div class="footnote">${footnum}${this.generate(children)}</div>`
-      : footnum)
-  }
-
-
-  table({ args, children }) {
-    let align;
-    if (args && args[0] === "left") {
-      align = "left"
+    if (children) {
+      return `<div class="footnote">${footnum}${parse(children, this)}</div>`
+    } else {
+      return footnum
     }
-    this.add(`<div class="table">
-      <table ${align ? `style="text-align: ${align}"` : ``}>
-        ${genHtml(children)}
-      </table>
-    </div>`)
   }
 
-  comment() { }
+  table(args, children) {
+    const funcMap = this
+    let html = `<div class="table">`
+    if (args && args[0] === "left") {
+      html += `<table style="text-align: left">`
+    } else {
+      html += `<table>`
+    }
+    html += parse(children, {
+      __block__(children) {
+        return children.map(row => `<tr>${row}</tr>`).join('')
+      },
+      header(_, children) {
+        return children[0].split('|').map(h => `<th>${h.trim()}</th>`).join('')
+      },
+      __line__(children) {
+        return children[0].text.split('|').map(s => `<td>${s.trim()}</td>`).join('')
+      }
+    })
+    html += `</table>`
+    html += `</div>`
+    console.log(html)
+    return html
+  }
+
+  __text__(text) { return text }
+  __line__(children) { return (children ? children.join('') : '') }
+  __block__(children) { return children ? children.join('\n') : '' }
+
+  __command__(node) { return `<span class="error">Cmd <code>"${node.id}"</code> not found</span>` }
 }
 
-const genHtml = (mr) => {
-  const G = new HtmlGenerator();
-  return G.generate(mr)
-}
+const genHtml = (str) => parse(str.split('\n'), new HtmlFuncMap())
 
 module.exports = {
   genHtml

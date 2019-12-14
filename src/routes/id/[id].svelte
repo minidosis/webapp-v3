@@ -15,20 +15,6 @@
   import GraphLinks from "../../components/GraphLinks.svelte";
 
   export let node;
-
-  const isTextNode = node => node && typeof node === "object" && node.id === "text"
-
-  const genText = mr => {
-    // Search for the @text node for now...
-    if (!Array.isArray(mr)) {
-      return `<span class="error">Markright is not an array</span>`
-    }
-    const text = mr.filter(isTextNode)
-    if (text.length !== 1) {
-      return `<span class="error">Node has ${text.length} text nodes!</span>`;
-    }
-    return genHtml(text[0].children);
-  };
 </script>
 
 <style>
@@ -41,7 +27,9 @@
   }
 
   @media (max-width: 800px) {
-  	.content { width: 90%; }
+    .content {
+      width: 90%;
+    }
   }
 
   .header {
@@ -100,7 +88,8 @@
   .text :global(p) {
     margin-bottom: 0.4em;
   }
-  :global(.enumerate), :global(.itemize) {
+  :global(.enumerate),
+  :global(.itemize) {
     padding-left: 0.8em;
   }
   :global(.enumerate .item),
@@ -192,21 +181,37 @@
   :global(img) {
     width: 100%;
   }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .middle {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
 </style>
 
 <svelte:head>
   <title>{node.title}</title>
 </svelte:head>
 
-<div class="content">
+<div class="page">
   <GraphLinks direction="up" links={node.parents} />
+  <div class="middle">
+    <GraphLinks direction="left" links={node.bases} />
+    <div class="content">
+      <div class="header">
+        <h1>{node.title}</h1>
+      </div>
+      <div class="text">
+        {@html genHtml(node.content)}
+      </div>
+    </div>
+    <GraphLinks direction="right" links={node.derived} />
+  </div>
   <GraphLinks direction="down" links={node.children} />
-  <GraphLinks direction="left" links={node.bases} />
-  <GraphLinks direction="right" links={node.derived} />
-  <div class="header">
-    <h1>{node.title}</h1>
-  </div>
-  <div class="text">
-    {@html genText(node.content)}
-  </div>
 </div>
