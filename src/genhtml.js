@@ -1,5 +1,5 @@
 
-const { parse } = require('@minidosis/markright')
+const { parse, parseRecur } = require('@minidosis/markright')
 
 const escape = (text) => {
   let result = ''
@@ -108,6 +108,11 @@ class HtmlFuncMap {
       html += `<table>`
     }
     html += parse(children, {
+      __text__: funcMap.__text__,
+      // TODO: Aquí hay que duplicar el 'code' sin hacer parse porque no funciona bien...
+      code(_, children) {
+        return `<span class="code">${escape(children.join(''))}</span>`
+      },
       __block__(children) {
         return children.map(row => `<tr>${row}</tr>`).join('')
       },
@@ -115,7 +120,7 @@ class HtmlFuncMap {
         return children[0].split('|').map(h => `<th>${h.trim()}</th>`).join('')
       },
       __line__(children) {
-        return children[0].text.split('|').map(s => `<td>${s.trim()}</td>`).join('')
+        return children.join('').split('|').map(td => `<td>${td}</td>`).join('')
       }
     })
     html += `</table>`
