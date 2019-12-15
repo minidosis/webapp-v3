@@ -86,11 +86,12 @@
     border-bottom: 1px solid rgb(195, 216, 241);
   }
   .text :global(p) {
-    margin-bottom: 0.4em;
+    margin: 0.4em 0 0.4em;
   }
   :global(.enumerate),
   :global(.itemize) {
     padding-left: 0.8em;
+    padding-top: .2em;
   }
   :global(.enumerate .item),
   :global(.itemize .item) {
@@ -140,10 +141,6 @@
     justify-content: center;
     align-items: stretch;
   }
-  :global(div.pre.display) {
-    padding-top: 0.8em;
-    padding-bottom: 0.8em;
-  }
   :global(.display pre) {
     display: inline-block;
     color: black;
@@ -161,12 +158,12 @@
     font-size: 1em;
   }
   :global(span.code) {
-    font-family: monospace;
-    font-size: 0.8em;
+    font-family: 'Iosevka', monospace;
+    font-size: 0.75em;
   }
   :global(span.box) {
-    font-size: 0.9em;
-    font-family: monospace;
+    font-size: 0.85em;
+    font-family: 'Iosevka', monospace;
     background-color: #a0a0a0;
     color: white;
     padding: 0 0.38em;

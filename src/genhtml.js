@@ -13,6 +13,25 @@ const escape = (text) => {
   return result
 }
 
+const divideByParagraphs = paragraphFunc => ({ children }) => {
+  let html = ''
+  let paragraph = ''
+  for (let item of children) {
+    if (item === '') {
+      if (paragraph) {
+        html += paragraphFunc(paragraph)
+        paragraph = ''
+      }
+    } else {
+      paragraph += item + ' '
+    }
+  }
+  if (paragraph) {
+    html += paragraphFunc(paragraph)
+  }
+  return html
+}
+
 const HtmlFuncMap = {
 
   minidosis: ({ args, rawChildren }) => `<a href="${"id/" + args[0]}">${parse(rawChildren, HtmlFuncMap)}</a>`,
@@ -29,7 +48,10 @@ const HtmlFuncMap = {
       row({ rawChildren }) {
         html += `<div class="item"><span class="num">${num}</span>`
         html += `<div class="content">`
-        html += parse(rawChildren, HtmlFuncMap)
+        html += parse(rawChildren, {
+          ...HtmlFuncMap,
+          __block__: divideByParagraphs(p => p),
+        })
         html += `</div></div>`
         num++
       },
@@ -44,7 +66,10 @@ const HtmlFuncMap = {
       row({ rawChildren }) {
         html += `<div class="item"><span class="bullet">&bull;</span>`
         html += `<div class="content">`
-        html += parse(rawChildren, HtmlFuncMap)
+        html += parse(rawChildren, {
+          ...HtmlFuncMap,
+          __block__: divideByParagraphs(p => p),
+        })
         html += `</div></div>`
       },
     })
@@ -68,7 +93,10 @@ const HtmlFuncMap = {
     return html
   },
 
-  code: ({ rawChildren }) => `<span class="code">${escape(parse(rawChildren, HtmlFuncMap))}</span>`,
+  code: ({ rawChildren }) => {
+    console.log(`code: "${rawChildren}"`)
+    return `<span class="code">${escape(rawChildren)}</span>`
+  },
 
   img: ({ rawChildren }) => `<img src="asset/${rawChildren[0]}" />`,
 
@@ -86,7 +114,10 @@ const HtmlFuncMap = {
   footnote: ({ args, rawChildren }) => {
     const footnum = `<span class="footnote">${args[0]}</span>`
     if (rawChildren) {
-      return `<div class="footnote">${footnum}${parse(rawChildren, HtmlFuncMap)}</div>`
+      return `<div class="footnote">${footnum}${parse(rawChildren, {
+        ...HtmlFuncMap,
+        __block__: divideByParagraphs(p => p),
+      })}</div>`
     } else {
       return footnum
     }
@@ -115,7 +146,12 @@ const HtmlFuncMap = {
 
   __text__: ({ text }) => text,
   __line__: ({ children }) => (children ? children.join('') : ''),
-  __block__: ({ children }) => (children ? children.join('\n') : ''),
+  __block__: divideByParagraphs((paragraph) => {
+    if (paragraph.startsWith('<div')) {
+      return paragraph;
+    }
+    return `<p>${paragraph}</p>\n`
+  }),
 
   __command__: (node) => `<span class="error">Cmd <code>"${node.id}"</code> not found</span>`,
 }
