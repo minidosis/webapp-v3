@@ -39,30 +39,35 @@
 	.selected::after {
 		position: absolute;
 		content: '';
-		width: calc(100% - 1em);
+		width: calc(80%);
 		height: 2px;
-		background-color: rgb(170,30,30);
+		background-color: rgb(226, 133, 11);
 		display: block;
-		bottom: -1px;
+    bottom: -1px;
+    left: 10%;
 	}
 
 	a {
 		text-decoration: none;
-		padding: 1em 0.5em;
+		padding: 1em .5em .5em;
 		display: block;
 	}
 
   ul {
     margin-right: 2em;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
   }
   
 </style>
 
 <nav>
 	<ul>
-		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>home</a></li>
-		<li><a class='{segment === "about" ? "selected" : ""}' href='about'>about</a></li>
-    <li><a rel=prefetch class='{segment === "id" ? "selected" : ""}' href='id'>conceptos</a></li>
+		<li class='{segment === undefined ? "selected" : ""}' ><a href='.'><img src="logo.svg" alt="logo" /></a></li>
+    <li class='{segment === "id" ? "selected" : ""}'>      <a rel=prefetch href='id'>conceptos</a></li>
+		<li class='{segment === "courses" ? "selected" : ""}' ><a href='courses'>cursos</a></li>
+    <li class='{segment === "map" ? "selected" : ""}'>     <a href='map'>mapa</a></li>
 	</ul>
 
   <SearchBox on:search />
