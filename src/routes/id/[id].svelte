@@ -11,11 +11,76 @@
 </script>
 
 <script>
+  import { goto } from "@sapper/app";
+  import { onMount, beforeUpdate, afterUpdate, tick } from "svelte";
+  import { fly } from "svelte/transition";
   import { genHtml } from "../../genhtml";
   import GraphLinks from "../../components/GraphLinks.svelte";
 
   export let node;
+  export let visibleNode;
+
+  let transition = {
+    x: 300,
+    duration: 250
+  };
+
+  onMount(() => {
+    visibleNode = node;
+  });
+
+  const forwardTransitions = {
+    up: { y: 300, x: 0 },
+    down: { y: -300, x: 0 },
+    left: { x: 300, y: 0 },
+    right: { x: -300, y: 0 }
+  };
+  const inverseTransitions = {
+    up: { y: -300, x: 0 },
+    down: { y: 300, x: 0 },
+    left: { x: -300, y: 0 },
+    right: { x: 300, y: 0 }
+  };
+
+  const changePage = async (id, dir) => {
+    console.log("change-page", id, dir);
+    await goto("id/" + id);
+    transition = { ...transition, ...forwardTransitions[dir] };
+    await tick();
+    console.log(transition);
+    visibleNode = null;
+    setTimeout(async () => {
+      transition = { ...transition, ...inverseTransitions[dir] };
+      await tick();
+      visibleNode = node;
+    }, 400);
+  };
 </script>
+
+<svelte:head>
+  <title>{node.title}</title>
+</svelte:head>
+
+<div class="page">
+  {#if visibleNode}
+    <GraphLinks direction="up" links="{node.parents}" click="{changePage}" />
+    <GraphLinks direction="left" links="{node.bases}" click="{changePage}" />
+    <GraphLinks direction="right" links="{node.derived}" click="{changePage}" />
+    <GraphLinks direction="down" links="{node.children}" click="{changePage}" />
+  {/if}
+
+  {#if visibleNode}
+    <div class="content" transition:fly="{transition}">
+      <div class="header">
+        <h1>{visibleNode.title}</h1>
+      </div>
+      <div class="text">
+        {@html genHtml(visibleNode.content)}
+      </div>
+    </div>
+  {/if}
+
+</div>
 
 <style>
   .content {
@@ -24,6 +89,7 @@
     background-color: white;
     border-radius: 0.4em;
     padding: 1.4em;
+    min-height: 40em;
   }
 
   @media (max-width: 800px) {
@@ -91,7 +157,7 @@
   :global(.enumerate),
   :global(.itemize) {
     padding-left: 0.8em;
-    padding-top: .2em;
+    padding-top: 0.2em;
   }
   :global(.enumerate .item),
   :global(.itemize .item) {
@@ -158,12 +224,12 @@
     font-size: 1em;
   }
   :global(span.code) {
-    font-family: 'Iosevka', monospace;
+    font-family: "Iosevka", monospace;
     font-size: 0.75em;
   }
   :global(span.box) {
     font-size: 0.85em;
-    font-family: 'Iosevka', monospace;
+    font-family: "Iosevka", monospace;
     background-color: #a0a0a0;
     color: white;
     padding: 0 0.38em;
@@ -179,35 +245,10 @@
   }
 
   .page {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-  }
-  .middle {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
+    position: relative;
   }
 </style>
-
-<svelte:head>
-  <title>{node.title}</title>
-</svelte:head>
-
-<div class="page">
-  <GraphLinks direction="up" links={node.parents} />
-  <div class="middle">
-    <GraphLinks direction="left" links={node.bases} />
-    <div class="content">
-      <div class="header">
-        <h1>{node.title}</h1>
-      </div>
-      <div class="text">
-        {@html genHtml(node.content)}
-      </div>
-    </div>
-    <GraphLinks direction="right" links={node.derived} />
-  </div>
-  <GraphLinks direction="down" links={node.children} />
-</div>
