@@ -93,14 +93,9 @@ const HtmlFuncMap = {
     return html
   },
 
-  code: ({ rawChildren }) => {
-    console.log(`code: "${rawChildren}"`)
-    return `<span class="code">${escape(rawChildren)}</span>`
-  },
-
-  img: ({ rawChildren }) => `<img src="asset/${rawChildren[0]}" />`,
-
+  code: ({ rawChildren }) => `<span class="code">${escape(rawChildren)}</span>`,
   box: ({ rawChildren }) => `<span class="box">${parse(rawChildren, HtmlFuncMap)}</span>`,
+  img: ({ rawChildren }) => `<img src="asset/${rawChildren}" />`,
 
   header: ({ rawChildren }) => {
     let html = `<thead><tr>`
@@ -132,10 +127,7 @@ const HtmlFuncMap = {
     }
     html += parse(rawChildren, {
       ...HtmlFuncMap,
-
-      code: ({ rawChildren }) => `<span class="code">${escape(rawChildren)}</span>`,
       header: ({ rawChildren }) => rawChildren.split('|').map(h => `<th>${h.trim()}</th>`).join(''),
-
       __block__: ({ children }) => children.map(row => `<tr>${row}</tr>`).join(''),
       __line__: ({ children }) => children.join('').split('|').map(td => `<td>${td}</td>`).join(''),
     })
