@@ -35,7 +35,6 @@ const HtmlFuncMap = {
       },
     })
     html += `</div>`
-    console.log(html)
     return html
   },
 
@@ -77,7 +76,6 @@ const HtmlFuncMap = {
 
   header: ({ rawChildren }) => {
     let html = `<thead><tr>`
-    console.log("header", rawChildren)
     rawChildren.forEach(ch => {
       html += `<th>${ch.children[0]}</th>`
     })

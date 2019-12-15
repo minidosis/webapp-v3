@@ -16,7 +16,6 @@
     } else if (e.key === 'ArrowUp') {
       selected = (selected - 1 + results.length) % results.length
     } else if (e.key === 'Enter') {
-      console.log('go', selected)
       sapper.goto(`/id/${results[selected].id}`)
       e.preventDefault()
       dispatch('hideresults')
