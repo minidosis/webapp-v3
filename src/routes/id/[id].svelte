@@ -129,9 +129,8 @@
   }
   :global(pre) {
     font-size: 0.85em;
-    margin: 0.15em;
-    padding: 0.3em 0.6em;
-    border: 1px solid rgb(200, 214, 228);
+    margin: 0.85em 0.15em;
+    padding: 0.5em 0.75em;
     border-radius: 4px;
     background: rgb(230, 240, 250);
   }
